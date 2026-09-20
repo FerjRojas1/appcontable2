@@ -42,6 +42,7 @@ namespace AppEstudioContable.Controllers
                 var TotalCreditoFiscal = await _compraManager.ObtenerIVAMensualPorCliente(cliente, (int)año);
 
                 ViewBag.Id = cliente.IdPersona;
+                ViewBag.RazonSocial = cliente.RazonSocial;
 
                 var model = new GananciasModel
                 {

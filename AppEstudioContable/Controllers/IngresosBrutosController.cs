@@ -64,6 +64,8 @@ namespace AppEstudioContable.Controllers
 
             ViewBag.Cuit = cliente.Cuit;
 
+            ViewBag.RazonSocial = cliente.RazonSocial;
+
             if (cliente == null)
             {
                 TempData["ErrorMessage"] = $"Error: No se encontró cliente con id: {id}";

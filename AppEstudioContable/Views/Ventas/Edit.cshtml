@@ -12,24 +12,21 @@
                     <i class="fas fa-edit mr-2 text-secondary"></i> Editar Venta
                 </h3>
             </div>
-            
+
             <div class="card-body">
                 <form asp-action="Edit" method="post">
-                    
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger @(ViewData.ModelState.IsValid ? "d-none" : "")"></div> @* Aseguramos que la alerta se muestre si hay errores *@
+                    <div asp-validation-summary="ModelOnly" class="app-alert app-alert--danger @(ViewData.ModelState.IsValid ? "d-none" : "")"></div>
+
                     <input type="hidden" asp-for="IdVenta" />
-                    <input type="hidden" name="cuit" value="@ViewBag.Cuit" /> 
+                    <input type="hidden" name="cuit" value="@ViewBag.Cuit" />
                     <input type="hidden" name="IdCliente" value="@Model.id" />
 
                     <div class="form-row">
-                        
-
                         <div class="form-group col-md-6">
                             <label asp-for="Fecha" class="text-muted"></label>
-                            <input asp-for="Fecha" class="form-control" type="date" /> 
+                            <input asp-for="Fecha" class="form-control" type="date" />
                             <span asp-validation-for="Fecha" class="text-danger"></span>
                         </div>
-
                         <div class="form-group col-md-6">
                             <label asp-for="TipoFact" class="text-muted"></label>
                             <input asp-for="TipoFact" class="form-control" />
@@ -43,13 +40,11 @@
                             <input asp-for="PuntoVenta" class="form-control" />
                             <span asp-validation-for="PuntoVenta" class="text-danger"></span>
                         </div>
-
                         <div class="form-group col-md-4">
                             <label asp-for="NroDesde" class="text-muted"></label>
                             <input asp-for="NroDesde" class="form-control" />
                             <span asp-validation-for="NroDesde" class="text-danger"></span>
                         </div>
-
                         <div class="form-group col-md-4">
                             <label asp-for="NroHasta" class="text-muted"></label>
                             <input asp-for="NroHasta" class="form-control" />
@@ -63,13 +58,11 @@
                             <input asp-for="TipoDocComprador" class="form-control" />
                             <span asp-validation-for="TipoDocComprador" class="text-danger"></span>
                         </div>
-
                         <div class="form-group col-md-4">
                             <label asp-for="NroDocComprador" class="text-muted"></label>
                             <input asp-for="NroDocComprador" class="form-control" />
                             <span asp-validation-for="NroDocComprador" class="text-danger"></span>
                         </div>
-
                         <div class="form-group col-md-4">
                             <label asp-for="DenomComprador" class="text-muted"></label>
                             <input asp-for="DenomComprador" class="form-control" />
@@ -78,13 +71,11 @@
                     </div>
 
                     <div class="form-row">
-                       
                         <div class="form-group col-md-6">
                             <label asp-for="TipoCambio" class="text-muted"></label>
                             <input asp-for="TipoCambio" class="form-control" />
                             <span asp-validation-for="TipoCambio" class="text-danger"></span>
                         </div>
-
                         <div class="form-group col-md-6">
                             <label asp-for="Moneda" class="text-muted"></label>
                             <input asp-for="Moneda" class="form-control" />
@@ -92,104 +83,108 @@
                         </div>
                     </div>
 
+                    <hr />
+                    <h5 class="mt-3 mb-3">Desglose de Gravados</h5>
                     <div class="form-row">
                         <div class="form-group col-md-2">
-                            <label asp-for="Grav0" class="text-muted"></label>
-                            <input asp-for="Grav0" class="form-control" type="number" step="any" />
+                            <label asp-for="Grav0" class="text-muted">Gravado 0%</label>
+                            <input asp-for="Grav0" class="form-control currency-input" type="text" inputmode="decimal" />
                             <span asp-validation-for="Grav0" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-2">
-                            <label asp-for="Grav5" class="text-muted"></label>
-                            <input asp-for="Grav5" class="form-control" type="number" step="any" />
-                            <span asp-validation-for="Grav5" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Grav105" class="text-muted"></label>
-                            <input asp-for="Grav105" class="form-control" type="number" step="any" /> 
-                            <span asp-validation-for="Grav105" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Grav21" class="text-muted"></label>
-                            <input asp-for="Grav21" class="form-control" type="number" step="any" /> 
-                            <span asp-validation-for="Grav21" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Grav25" class="text-muted"></label>
-                            <input asp-for="Grav25" class="form-control" type="number" step="any" /> 
+                            <label asp-for="Grav25" class="text-muted">Gravado 2.5%</label>
+                            <input asp-for="Grav25" class="form-control currency-input" type="text" inputmode="decimal" />
                             <span asp-validation-for="Grav25" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-2">
-                            <label asp-for="Grav27" class="text-muted"></label>
-                            <input asp-for="Grav27" class="form-control" type="number" step="any" /> 
+                            <label asp-for="Grav5" class="text-muted">Gravado 5%</label>
+                            <input asp-for="Grav5" class="form-control currency-input" type="text" inputmode="decimal" />
+                            <span asp-validation-for="Grav5" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label asp-for="Grav105" class="text-muted">Gravado 10.5%</label>
+                            <input asp-for="Grav105" class="form-control currency-input" type="text" inputmode="decimal" />
+                            <span asp-validation-for="Grav105" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label asp-for="Grav21" class="text-muted">Gravado 21%</label>
+                            <input asp-for="Grav21" class="form-control currency-input" type="text" inputmode="decimal" />
+                            <span asp-validation-for="Grav21" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label asp-for="Grav27" class="text-muted">Gravado 27%</label>
+                            <input asp-for="Grav27" class="form-control currency-input" type="text" inputmode="decimal" />
                             <span asp-validation-for="Grav27" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group col-md-2">
-                            <label asp-for="Iva0" class="text-muted"></label>
-                            <input asp-for="Iva0" class="form-control" type="number" step="any" /> 
+                    <hr />
+                    <h5 class="mt-3 mb-3">Desglose de IVA</h5>
+                    <div class="row">
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva0" class="control-label">IVA 0%</label>
+                            <input asp-for="Iva0" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
                             <span asp-validation-for="Iva0" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Iva5" class="text-muted"></label>
-                            <input asp-for="Iva5" class="form-control" type="number" step="any" /> 
-                            <span asp-validation-for="Iva5" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Iva105" class="text-muted"></label>
-                            <input asp-for="Iva105" class="form-control" type="number" step="any" /> 
-                            <span asp-validation-for="Iva105" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Iva21" class="text-muted"></label>
-                            <input asp-for="Iva21" class="form-control" type="number" step="any" /> 
-                            <span asp-validation-for="Iva21" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Iva25" class="text-muted"></label>
-                            <input asp-for="Iva25" class="form-control" type="number" step="any" /> 
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva25" class="control-label">IVA 2.5%</label>
+                            <input asp-for="Iva25" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
                             <span asp-validation-for="Iva25" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-2">
-                            <label asp-for="Iva27" class="text-muted"></label>
-                            <input asp-for="Iva27" class="form-control" type="number" step="any" /> 
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva5" class="control-label">IVA 5%</label>
+                            <input asp-for="Iva5" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
+                            <span asp-validation-for="Iva5" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva105" class="control-label">IVA 10.5%</label>
+                            <input asp-for="Iva105" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
+                            <span asp-validation-for="Iva105" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva21" class="control-label">IVA 21%</label>
+                            <input asp-for="Iva21" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
+                            <span asp-validation-for="Iva21" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva27" class="control-label">IVA 27%</label>
+                            <input asp-for="Iva27" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
                             <span asp-validation-for="Iva27" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group col-md-3">
-                            <label asp-for="NetoGravado" class="text-muted"></label>
-                            <input asp-for="NetoGravado" class="form-control" type="number" step="any" />
+                    <hr />
+                    <h5 class="mt-3 mb-3">Totales Generales</h5>
+                    <div class="row">
+                        <div class="col-md-3 form-group">
+                            <label asp-for="NetoGravado" class="control-label">Neto Gravado</label>
+                            <input asp-for="NetoGravado" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
                             <span asp-validation-for="NetoGravado" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label asp-for="NoGravado" class="text-muted"></label>
-                            <input asp-for="NoGravado" class="form-control" type="number" step="any" />
+                        <div class="col-md-3 form-group">
+                            <label asp-for="NoGravado" class="control-label">No Gravado</label>
+                            <input asp-for="NoGravado" class="form-control currency-input" type="text" inputmode="decimal" />
                             <span asp-validation-for="NoGravado" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label asp-for="Exento" class="text-muted"></label>
-                            <input asp-for="Exento" class="form-control" type="number" step="any" />
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Exento" class="control-label">Exento</label>
+                            <input asp-for="Exento" class="form-control currency-input" type="text" inputmode="decimal" />
                             <span asp-validation-for="Exento" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label asp-for="Iva" class="text-muted"></label>
-                            <input asp-for="Iva" class="form-control" type="number" step="any" />
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Iva" class="control-label">IVA Total</label>
+                            <input asp-for="Iva" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
                             <span asp-validation-for="Iva" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label asp-for="Total" class="control-label">Total del Comprobante</label>
+                            <input asp-for="Total" class="form-control bg-light currency-input" type="text" inputmode="decimal" readonly />
+                            <span asp-validation-for="Total" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label asp-for="Total" class="text-muted"></label>
-                        <input asp-for="Total" class="form-control" type="number" step="any" />
-                        <span asp-validation-for="Total" class="text-danger"></span>
-                    </div>
-
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mt-4">
                         <a asp-action="Index" asp-route-cuit="@ViewBag.Cuit" class="btn btn-outline-secondary btn-shine">
-                          
                             <i class="fas fa-arrow-left mr-1"></i> Volver
                         </a>
                         <button type="submit" class="btn btn-primary btn-shine">
@@ -203,73 +198,8 @@
 </section>
 
 @section Scripts {
-
-    <script>
-        $(document).ready(function() {   
-
-            if ($('#Fecha').val() === '') {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0');
-                var yyyy = today.getFullYear();
-                $('#Fecha').val(yyyy + '-' + mm + '-' + dd);
-            }
-
-
-            $('form').submit(function() {
-                var nroDesde = $('#NroDesde').val();
-                if ($('#NroHasta').val() === '' && nroDesde !== '') {
-                    $('#NroHasta').val(nroDesde);
-                }
-
-                $(this).find('input[type="number"]').each(function () {
-                    if ($(this).val() === '') {
-                        $(this).val(0);
-                    }
-                });
-
-            });
-
-
-            function calculateTotals() {
-                var netoGravado = parseFloat($('#NetoGravado').val()) || 0;
-                var noGravado = parseFloat($('#NoGravado').val()) || 0;
-                var exento = parseFloat($('#Exento').val()) || 0;
-
-
-                var iva0 = parseFloat($('#Iva0').val()) || 0;
-                var iva25 = parseFloat($('#Iva25').val()) || 0;
-                var iva5 = parseFloat($('#Iva5').val()) || 0;
-                var iva105 = parseFloat($('#Iva105').val()) || 0;
-                var iva21 = parseFloat($('#Iva21').val()) || 0;
-                var iva27 = parseFloat($('#Iva27').val()) || 0;
-
-                var grav0 = parseFloat($('#Grav0').val()) || 0;
-                var grav25 = parseFloat($('#Grav25').val()) || 0;
-                var grav5 = parseFloat($('#Grav5').val()) || 0;
-                var grav105 = parseFloat($('#Grav105').val()) || 0;
-                var grav21 = parseFloat($('#Grav21').val()) || 0;
-                var grav27 = parseFloat($('#Grav27').val()) || 0;
-
-                var totalIvaCalculado = iva0 + iva25 + iva5 + iva105 + iva21 + iva27;
-                $('#Iva').val(totalIvaCalculado.toFixed(2));
-
-                var netoGravado = grav0 + grav25 + grav5 + grav105 + grav21 + grav27;
-                $('#NetoGravado').val(netoGravado.toFixed(2));
-
-                var totalGeneral = netoGravado + noGravado + exento + totalIvaCalculado;
-                $('#Total').val(totalGeneral.toFixed(2));
-
-
-
-            }
-
-            $('#Grav0, #Grav25, #Grav5, #Grav105, #Grav21, #Grav27, #NoGravado, #Exento, #Iva0, #Iva25, #Iva5, #Iva105, #Iva21, #Iva27').on('input', calculateTotals);
-
-            calculateTotals();
-        });
-    </script>
-
+    <script src="~/js/currency-helper.js" asp-append-version="true"></script>
+    <script src="~/js/venta-manual.js" asp-append-version="true"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

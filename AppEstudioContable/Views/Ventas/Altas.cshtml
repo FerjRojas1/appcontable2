@@ -1,648 +1,481 @@
 ﻿@model AppEstudioContable.Models.VentaViewModel
 
+
+
 @{
     ViewData["Title"] = "Gestión de Ventas";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
- 
-<style>
-   
-    body {
-        background-color: #f8f9fa;
-    }
-    
-    .card {
-        border: none; 
-        border-radius: 1rem; 
-        overflow: hidden; 
-        transition: all 0.3s ease; 
-    }
-    /*
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; 
-        }
-        */
-    .card-header {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-        font-size: 1.25rem; 
-        padding: 1.25rem 1.5rem; 
-    }
-    
-    .btn-shine {
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-    }
-    
-        .btn-shine::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -75%;
-            width: 50%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: skewX(-20deg);
-            transition: all 0.7s cubic-bezier(0.165, 0.84, 0.44, 1);
-            z-index: -1;
-        }
-
-        .btn-shine:hover::before {
-            left: 125%;
-        }
-
-    .table th, .table td {
-        vertical-align: middle; 
-    }
-
-    .form-control:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-    }
-
-
-    .modal-body .form-group label {
-        font-weight: 600;
-        color: #555;
-    }
-
-    details {
-        margin-bottom: 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-        background-color: #f1f1f1;
-        transition: all 0.3s ease;
-    }
-
-        details:hover {
-            background-color: #e9ecef;
-        }
-
-    summary {
-        font-weight: bold;
-        cursor: pointer;
-        outline: none;
-        color: #007bff;
-    }
-
-        summary:hover {
-            color: #0056b3;
-        }
-
-    details[open] summary {
-        border-bottom: 1px solid #dee2e6;
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.5rem;
-    } 
-
-    .modal-body {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
-
-</style>
-
-<h2 class="text-center text-primary mb-5 animate__animated animate__fadeInDown">
-    <i class="fas fa-file-invoice-dollar me-3"></i>Gestión de Ventas
-</h2>
-
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
-        <i class="fas fa-check-circle me-2"></i>
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
 }
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 }
 
-<div class="container my-5">
-    <div class="row g-4">
-        @* Sección para importar ventas desde Excel *@
-        <div class="col-md-6">
-            <div class="card shadow-lg h-100">
-                <div class="card-header bg-gradient-light text-secondary">
-                    <i class="fas fa-file-excel me-2"></i>Importar Ventas desde Excel
-                </div>
-
-                <div class="card-body p-4">
-                    <p class="card-text text-muted mb-4">Carga masiva de ventas mediante un archivo Excel.</p>
-
-                    <form id="formCargaExcel" asp-controller="Ventas" asp-action="Altas" method="post" enctype="multipart/form-data">
-                        @Html.AntiForgeryToken()
-
-                        <div class="mb-3">
-                            <label for="file" class="form-label fw-semibold text-dark">
-                                Selecciona un archivo <span class="text-primary">(formatos .xlsx, .xls, .csv)</span>
-                            </label>
-                            <input type="file" name="file" id="file" accept=".xlsx,.xls,.csv" class="form-control" required />
-                            <div class="invalid-feedback" id="fileValidationError">
-                                Por favor, selecciona un archivo válido de Excel.
-                            </div>
-                            <div id="fileError" class="text-danger small mt-2"></div>
-                        </div>
-
-                        <input type="hidden" name="id" value="@Model.id" />
-
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger mt-3" })
-
-                        <button type="submit" id="btnCargar" class="btn btn-primary btn-lg w-100 btn-shine">
-                            <i class="fas fa-upload me-2"></i>Cargar Ventas
-                        </button>
-
-                        <!-- Modal de carga -->
-                        <div class="modal fade" id="modalCargando" tabindex="-1" aria-labelledby="modalCargandoLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content bg-light text-center shadow">
-                                    <div class="modal-body p-5">
-                                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-                                            <span class="sr-only">Cargando...</span>
-                                        </div>
-                                        <h5 class="mb-0 text-secondary">Procesando archivo, por favor espera...</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                
-            </div>
-        </div>
-
-        @* Sección para cargar venta manual *@
-        <div class="col-md-6">
-            <div class="card shadow-lg h-100">
-                <div class="card-header bg-gradient-light text-secondary">
-                    <i class="fas fa-plus-circle me-2"></i>Cargar Venta Manual
-                </div>
-                <div class="card-body p-4 d-flex flex-column justify-content-between">
-                    <p class="card-text text-muted mb-4">Ingresa una nueva venta manualmente, completando todos los detalles.</p>
-                    <form asp-controller="Ventas" asp-action="Create" method="get" enctype="multipart/form-data">
-                        <input type="hidden" name="id" value="@Model.id" />
-                        <button type="submit" class="btn btn-info btn-lg w-100 btn-shine">
-                            <i class="fas fa-pencil-alt me-2"></i>Nueva Venta
-                        </button>
-                    </form>
-                </div>
-            </div>
-      
-        
-        </div>
+<!-- Info del cliente -->
+<div class="app-card mb-4">
+    <div class="app-card__body text-center">
+        <h5 class="mb-0">
+            <span class="app-text-muted">Cliente:</span> @ViewBag.RazonSocial
+        </h5>
     </div>
 </div>
 
 
+<!-- Panel de importación / carga manual -->
+<div class="row">
+    <!-- Importar desde Excel -->
+    <div class="col-md-6">
+        <div class="app-card h-100">
+            <div class="app-card__header">
+                <h5 class="app-card__title">
+                    <i class="fas fa-file-excel me-2"></i> Importar Ventas desde Excel
+                </h5>
+            </div>
+            <div class="app-card__body">
+                <p class="app-text-muted app-mb-4">Carga masiva de ventas mediante un archivo Excel.</p>
 
-@* Bloque de Facturas Para Revisar *@
+                <form id="formCargaExcel"
+                      asp-controller="Ventas"
+                      asp-action="Altas"
+                      method="post"
+                      enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="app-form-group">
+                        <label for="file" class="app-form-label">
+                            Seleccioná un archivo
+                            <small class="app-text-muted">(formatos .xlsx, .xls, .csv)</small>
+                        </label>
+
+                        <div class="app-file">
+                            <input type="file" name="file" id="file"
+                                   accept=".xlsx,.xls,.csv"
+                                   class="app-form-control" required />
+                            <label class="app-file__label" for="file">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                <span class="app-file__text">Elegir archivo</span>
+                            </label>
+                        </div>
+
+                        <div class="app-form-error" id="fileError"></div>
+                        <div class="app-form-error" id="fileValidationError" style="display:none;">
+                            Por favor, seleccioná un archivo válido de Excel.
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="id" value="@Model.id" />
+
+                    @Html.ValidationSummary(true, "", new { @class = "app-alert app-alert--danger mt-3" })
+
+                    <button type="submit" id="btnCargar"
+                            class="app-btn app-btn--primary app-btn--lg app-btn--block app-btn--shine app-mt-4">
+                        <i class="fas fa-upload me-2"></i> Cargar Ventas
+                    </button>
+
+                    <!-- Modal de carga -->
+                    <div class="modal fade" id="modalCargando" tabindex="-1"
+                         aria-labelledby="modalCargandoLabel" aria-hidden="true"
+                         data-backdrop="static" data-keyboard="false">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content app-modal app-modal--loading">
+                                <div class="app-modal__body text-center">
+                                    <div class="app-spinner">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="sr-only">Cargando...</span>
+                                        </div>
+                                    </div>
+                                    <h5 class="mb-0 app-text-muted">Procesando archivo, por favor esperá...</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carga manual -->
+    <div class="col-md-6">
+        <div class="app-card h-100">
+            <div class="app-card__header">
+                <h5 class="app-card__title">
+                    <i class="fas fa-plus-circle me-2"></i> Cargar Venta Manual
+                </h5>
+            </div>
+            <div class="app-card__body app-flex-between" style="flex-direction: column;">
+                <p class="app-text-muted app-mb-4">
+                    Ingresá una nueva venta manualmente, completando todos los detalles.
+                </p>
+                <form asp-controller="Ventas" asp-action="Create" method="get" class="w-100">
+                    <input type="hidden" name="id" value="@Model.id" />
+                    <button type="submit" class="app-btn app-btn--info app-btn--lg app-btn--block app-btn--shine">
+                        <i class="fas fa-pencil-alt me-2"></i> Nueva Venta
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== Facturas para revisar ===================== -->
 @if (Model.ventasParaRevisar != null && Model.ventasParaRevisar.Any())
 {
-    <div class="container-fluid my-5">
-        <div class="card shadow-lg border-warning">
-            <div class="card-header bg-warning text-black">
+    <div class="app-card app-card--warning app-mt-5">
+        <div class="app-card__header app-card__header--warning">
+            <h5 class="app-card__title">
                 <i class="fas fa-exclamation-circle me-2"></i>
-                <strong>Facturas Para Revisar (@Model.ventasParaRevisar.Count())</strong>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table id="ventasParaRevisar" class="table table-striped table-hover m-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Tipo de Factura</th>
-                                <th>Punto de Venta</th>
-                                <th>Numero Desde</th>
-                                <th>Numero Documento Comprador</th>
-                                <th>Denominacion Comprador</th>
-                                <th>Moneda</th>
-                                <th>Neto Gravado</th>
-                                <th>Iva</th>
-                                <th>Total</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ventasParaRevisar)
-                            {
-                                <tr data-id="@item.IdVenta">
-                                    <td>@Html.DisplayFor(m => item.Fecha)</td>
-                                    <td>@Html.DisplayFor(m => item.TipoFact)</td>
-                                    <td>@Html.DisplayFor(m => item.PuntoVenta)</td>
-                                    <td>@Html.DisplayFor(m => item.NroDesde)</td>
-                                    <td>@Html.DisplayFor(m => item.NroDocComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.DenomComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.Moneda)</td>
-                                    <td>@Html.DisplayFor(m => item.NetoGravado)</td>
-                                    <td>@Html.DisplayFor(m => item.Iva)</td>
-                                    <td>@Html.DisplayFor(m => item.Total)</td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group" aria-label="Acciones de Venta">
-                                            @* Botón para abrir el modal de edición *@
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#modalEdit_@item.IdVenta" title="Editar Venta">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
+                Facturas para revisar: @Model.ventasParaRevisar.Count()
+            </h5>
+        </div>
+        <div class="app-card__body p-0">
+            <div class="table-responsive">
+                <table id="ventasParaRevisar" class="app-table app-table--striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo de Factura</th>
+                            <th>Punto de Venta</th>
+                            <th>Número Desde</th>
+                            <th>Número Documento Comprador</th>
+                            <th>Denominación Comprador</th>
+                            <th>Moneda</th>
+                            <th>Neto Gravado</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ventasParaRevisar)
+                        {
+                            <tr data-id="@item.IdVenta">
+                                <td>@Html.DisplayFor(m => item.Fecha)</td>
+                                <td>@Html.DisplayFor(m => item.TipoFact)</td>
+                                <td>@Html.DisplayFor(m => item.PuntoVenta)</td>
+                                <td>@Html.DisplayFor(m => item.NroDesde)</td>
+                                <td>@Html.DisplayFor(m => item.NroDocComprador)</td>
+                                <td>@Html.DisplayFor(m => item.DenomComprador)</td>
+                                <td>@Html.DisplayFor(m => item.Moneda)</td>
+                                <td>@Html.DisplayFor(m => item.NetoGravado)</td>
+                                <td>@Html.DisplayFor(m => item.Iva)</td>
+                                <td>@Html.DisplayFor(m => item.Total)</td>
+                                <td class="text-center">
+                                    <button type="button"
+                                            class="app-btn app-btn--outline app-btn--sm"
+                                            data-toggle="modal"
+                                            data-target="#modalEdit_@item.IdVenta"
+                                            title="Editar venta">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
 
-                                        @* Formulario emergente (Modal) para edición *@
-                                        <div class="modal fade" id="modalEdit_@item.IdVenta" tabindex="-1" aria-labelledby="modalLabelEdit_@item.IdVenta" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                                <div class="modal-content">
-                                                    <form method="post" action="/Ventas/Edit2">
-                                                        @Html.AntiForgeryToken() 
-                                                        <input type="hidden" name="IdVenta" value="@item.IdVenta" />
-                                                        <div class="modal-header bg-info text-white">
-                                                            <h5 class="modal-title" id="modalLabelEdit_@item.IdVenta">
-                                                                <i class="fas fa-pencil-alt me-2"></i>Editar Venta #@item.IdVenta
-                                                            </h5>
-                                                        </div>
-                                                        <div class="modal-body text-start">
-                                                            <details open>
-                                                               
-                                                                <summary>Datos Principales de la Venta</summary>
-                                                                <div class="row gx-3">
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="Fecha_@item.IdVenta" class="form-label">Fecha</label>
-                                                                        <input type="date" class="form-control" id="Fecha_@item.IdVenta" name="Fecha" value="@item.Fecha.ToString("yyyy-MM-dd")" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="TipoFact_@item.IdVenta" class="form-label">Tipo Factura</label>
-                                                                        <input type="text" class="form-control" id="TipoFact_@item.IdVenta" name="TipoFact" value="@item.TipoFact" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="PuntoVenta_@item.IdVenta" class="form-label">Punto de Venta</label>
-                                                                        <input type="text" class="form-control" id="PuntoVenta_@item.IdVenta" name="PuntoVenta" value="@item.PuntoVenta" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="NroDesde_@item.IdVenta" class="form-label">Número Desde</label>
-                                                                        <input type="text" class="form-control" id="NroDesde_@item.IdVenta" name="NroDesde" value="@item.NroDesde" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="NroHasta_@item.IdVenta" class="form-label">Número Hasta</label>
-                                                                        <input type="text" class="form-control" id="NroHasta_@item.IdVenta" name="NroHasta" value="@item.NroHasta" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="Moneda_@item.IdVenta" class="form-label">Moneda</label>
-                                                                        <input type="text" class="form-control" id="Moneda_@item.IdVenta" name="Moneda" value="@item.Moneda" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="TipoCambio_@item.IdVenta" class="form-label">Tipo de Cambio</label>
-                                                                        <input type="text" class="form-control" id="TipoCambio_@item.IdVenta" name="TipoCambio" value="@item.TipoCambio" required />
-                                                                    </div>
+                                    <!-- Modal edición -->
+                                    <div class="modal fade" id="modalEdit_@item.IdVenta" tabindex="-1"
+                                         aria-labelledby="modalLabelEdit_@item.IdVenta" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                            <div class="modal-content app-modal">
+                                                <form method="post" action="/Ventas/Edit2">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="IdVenta" value="@item.IdVenta" />
+
+                                                    <div class="app-modal__header app-modal__header--info">
+                                                        <h5 class="app-modal__title" id="modalLabelEdit_@item.IdVenta">
+                                                            <i class="fas fa-pencil-alt me-2"></i>
+                                                            Editar Venta #@item.IdVenta
+                                                        </h5>
+                                                    </div>
+
+                                                    <div class="app-modal__body">
+                                                        <!-- Datos principales -->
+                                                        <details class="app-details" open>
+                                                            <summary class="app-details__summary">Datos principales de la venta</summary>
+                                                            <div class="app-details__content row gx-3">
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="Fecha_@item.IdVenta">Fecha</label>
+                                                                    <input type="date" class="app-form-control"
+                                                                           id="Fecha_@item.IdVenta" name="Fecha"
+                                                                           value="@item.Fecha.ToString("yyyy-MM-dd")" required />
                                                                 </div>
-                                                            </details>
-
-                                                            <details>
-                                                                <summary>Datos del Comprador</summary>
-                                                                <div class="row gx-3">
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="DenomComprador_@item.IdVenta" class="form-label">Denominación Comprador</label>
-                                                                        <input type="text" class="form-control" id="DenomComprador_@item.IdVenta" name="DenomComprador" value="@item.DenomComprador" />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="TipoDocComprador_@item.IdVenta" class="form-label">Tipo Documento</label>
-                                                                        <input type="text" class="form-control" id="TipoDocComprador_@item.IdVenta" name="TipoDocComprador" value="@item.TipoDocComprador" required />
-                                                                    </div>
-                                                                    <div class="col-md-6 mb-3">
-                                                                        <label for="NroDocComprador_@item.IdVenta" class="form-label">Número Documento</label>
-                                                                        <input type="text" class="form-control" id="NroDocComprador_@item.IdVenta" name="NroDocComprador" value="@item.NroDocComprador" required />
-                                                                    </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="TipoFact_@item.IdVenta">Tipo Factura</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="TipoFact_@item.IdVenta" name="TipoFact"
+                                                                           value="@item.TipoFact" required />
                                                                 </div>
-                                                            </details>
-
-                                                            <details>
-                                                                <summary>Detalles de Importes (Moneda Local)</summary>
-                                                                <div class="row gx-3">
-                                                                    <div class="col-md-4 mb-3">
-                                                                        <label for="NetoGravado_@item.IdVenta" class="form-label">Neto Gravado</label>
-                                                                        <input type="text" class="form-control" id="NetoGravado_@item.IdVenta" name="NetoGravado" value="@item.NetoGravado" />
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-3">
-                                                                        <label for="NoGravado_@item.IdVenta" class="form-label">No Gravado</label>
-                                                                        <input type="text" class="form-control" id="NoGravado_@item.IdVenta" name="NoGravado" value="@item.NoGravado" />
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-3">
-                                                                        <label for="Exento_@item.IdVenta" class="form-label">Exento</label>
-                                                                        <input type="text" class="form-control" id="Exento_@item.IdVenta" name="Exento" value="@item.Exento" />
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-3">
-                                                                        <label for="Iva_@item.IdVenta" class="form-label">IVA Total</label>
-                                                                        <input type="text" class="form-control" id="Iva_@item.IdVenta" name="Iva" value="@item.Iva" />
-                                                                    </div>
-                                                                    <div class="col-md-4 mb-3">
-                                                                        <label for="Total_@item.IdVenta" class="form-label">Total Factura</label>
-                                                                        <input type="text" class="form-control" id="Total_@item.IdVenta" name="Total" value="@item.Total" />
-                                                                    </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="PuntoVenta_@item.IdVenta">Punto de Venta</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="PuntoVenta_@item.IdVenta" name="PuntoVenta"
+                                                                           value="@item.PuntoVenta" required />
                                                                 </div>
-                                                            </details>
-
-                                                            <details>
-                                                                <summary>Desglose de IVA y Gravados por Alícuota</summary>
-                                                                <div class="row gx-3">
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Iva0_@item.IdVenta" class="form-label">IVA 0%</label>
-                                                                        <input type="text" class="form-control" id="Iva0_@item.IdVenta" name="Iva0" value="@item.Iva0" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Iva5_@item.IdVenta" class="form-label">IVA 5%</label>
-                                                                        <input type="text" class="form-control" id="Iva5_@item.IdVenta" name="Iva5" value="@item.Iva5" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Iva105_@item.IdVenta" class="form-label">IVA 10.5%</label>
-                                                                        <input type="text" class="form-control" id="Iva105_@item.IdVenta" name="Iva105" value="@item.Iva105" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Iva21_@item.IdVenta" class="form-label">IVA 21%</label>
-                                                                        <input type="text" class="form-control" id="Iva21_@item.IdVenta" name="Iva21" value="@item.Iva21" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Iva25_@item.IdVenta" class="form-label">IVA 2.5%</label>
-                                                                        <input type="text" class="form-control" id="Iva25_@item.IdVenta" name="Iva25" value="@item.Iva25" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Iva27_@item.IdVenta" class="form-label">IVA 27%</label>
-                                                                        <input type="text" class="form-control" id="Iva27_@item.IdVenta" name="Iva27" value="@item.Iva27" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Grav0_@item.IdVenta" class="form-label">Gravado 0%</label>
-                                                                        <input type="text" class="form-control" id="Grav0_@item.IdVenta" name="Grav0" value="@item.Grav0" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Grav5_@item.IdVenta" class="form-label">Gravado 5%</label>
-                                                                        <input type="text" class="form-control" id="Grav5_@item.IdVenta" name="Grav5" value="@item.Grav5" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Grav105_@item.IdVenta" class="form-label">Gravado 10.5%</label>
-                                                                        <input type="text" class="form-control" id="Grav105_@item.IdVenta" name="Grav105" value="@item.Grav105" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Grav21_@item.IdVenta" class="form-label">Gravado 21%</label>
-                                                                        <input type="text" class="form-control" id="Grav21_@item.IdVenta" name="Grav21" value="@item.Grav21" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Grav25_@item.IdVenta" class="form-label">Gravado 2.5%</label>
-                                                                        <input type="text" class="form-control" id="Grav25_@item.IdVenta" name="Grav25" value="@item.Grav25" />
-                                                                    </div>
-                                                                    <div class="col-md-3 mb-3">
-                                                                        <label for="Grav27_@item.IdVenta" class="form-label">Gravado 27%</label>
-                                                                        <input type="text" class="form-control" id="Grav27_@item.IdVenta" name="Grav27" value="@item.Grav27" />
-                                                                    </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="NroDesde_@item.IdVenta">Número Desde</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="NroDesde_@item.IdVenta" name="NroDesde"
+                                                                           value="@item.NroDesde" required />
                                                                 </div>
-                                                            </details>
-                                                        </div>
-       
-                                                        <div class="modal-footer">
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="NroHasta_@item.IdVenta">Número Hasta</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="NroHasta_@item.IdVenta" name="NroHasta"
+                                                                           value="@item.NroHasta" required />
+                                                                </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="Moneda_@item.IdVenta">Moneda</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="Moneda_@item.IdVenta" name="Moneda"
+                                                                           value="@item.Moneda" required />
+                                                                </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="TipoCambio_@item.IdVenta">Tipo de Cambio</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="TipoCambio_@item.IdVenta" name="TipoCambio"
+                                                                           value="@item.TipoCambio" required />
+                                                                </div>
+                                                            </div>
+                                                        </details>
 
-                                                            <button type="button" class="btn btn-success btn-guardar-modal" data-id="@item.IdVenta">Guardar</button>
-                                                            @* <button type="submit" class="btn btn-success btn-shine"> <i class="fas fa-save me-2"></i>Guardar Cambios </button> *@
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
+                                                        <!-- Datos del comprador -->
+                                                        <details class="app-details">
+                                                            <summary class="app-details__summary">Datos del comprador</summary>
+                                                            <div class="app-details__content row gx-3">
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="DenomComprador_@item.IdVenta">Denominación Comprador</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="DenomComprador_@item.IdVenta" name="DenomComprador"
+                                                                           value="@item.DenomComprador" />
+                                                                </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="TipoDocComprador_@item.IdVenta">Tipo Documento</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="TipoDocComprador_@item.IdVenta" name="TipoDocComprador"
+                                                                           value="@item.TipoDocComprador" required />
+                                                                </div>
+                                                                <div class="col-md-6 app-form-group">
+                                                                    <label class="app-form-label" for="NroDocComprador_@item.IdVenta">Número Documento</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="NroDocComprador_@item.IdVenta" name="NroDocComprador"
+                                                                           value="@item.NroDocComprador" required />
+                                                                </div>
+                                                            </div>
+                                                        </details>
+
+                                                        <!-- Importes -->
+                                                        <details class="app-details">
+                                                            <summary class="app-details__summary">Detalles de importes (moneda local)</summary>
+                                                            <div class="app-details__content row gx-3">
+                                                                <div class="col-md-4 app-form-group">
+                                                                    <label class="app-form-label" for="NetoGravado_@item.IdVenta">Neto Gravado</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="NetoGravado_@item.IdVenta" name="NetoGravado"
+                                                                           value="@item.NetoGravado" />
+                                                                </div>
+                                                                <div class="col-md-4 app-form-group">
+                                                                    <label class="app-form-label" for="NoGravado_@item.IdVenta">No Gravado</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="NoGravado_@item.IdVenta" name="NoGravado"
+                                                                           value="@item.NoGravado" />
+                                                                </div>
+                                                                <div class="col-md-4 app-form-group">
+                                                                    <label class="app-form-label" for="Exento_@item.IdVenta">Exento</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="Exento_@item.IdVenta" name="Exento"
+                                                                           value="@item.Exento" />
+                                                                </div>
+                                                                <div class="col-md-4 app-form-group">
+                                                                    <label class="app-form-label" for="Iva_@item.IdVenta">IVA Total</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="Iva_@item.IdVenta" name="Iva"
+                                                                           value="@item.Iva" />
+                                                                </div>
+                                                                <div class="col-md-4 app-form-group">
+                                                                    <label class="app-form-label" for="Total_@item.IdVenta">Total Factura</label>
+                                                                    <input type="text" class="app-form-control"
+                                                                           id="Total_@item.IdVenta" name="Total"
+                                                                           value="@item.Total" />
+                                                                </div>
+                                                            </div>
+                                                        </details>
+
+                                                        <!-- Desglose IVA -->
+                                                        <details class="app-details">
+                                                            <summary class="app-details__summary">Desglose de IVA y gravados por alícuota</summary>
+                                                            <div class="app-details__content row gx-3">
+                                                                @{
+                                                                    var campos = new[]
+                                                                    {
+                                                                                                                ("Iva0", "IVA 0%", item.Iva0),
+                                                                                                                ("Iva5", "IVA 5%", item.Iva5),
+                                                                                                                ("Iva105", "IVA 10.5%", item.Iva105),
+                                                                                                                ("Iva21", "IVA 21%", item.Iva21),
+                                                                                                                ("Iva25", "IVA 2.5%", item.Iva25),
+                                                                                                                ("Iva27", "IVA 27%", item.Iva27),
+                                                                                                                ("Grav0", "Gravado 0%", item.Grav0),
+                                                                                                                ("Grav5", "Gravado 5%", item.Grav5),
+                                                                                                                ("Grav105", "Gravado 10.5%", item.Grav105),
+                                                                                                                ("Grav21", "Gravado 21%", item.Grav21),
+                                                                                                                ("Grav25", "Gravado 2.5%", item.Grav25),
+                                                                                                                ("Grav27", "Gravado 27%", item.Grav27)
+                                                                                                                };
+                                                                }
+                                                                @foreach (var (nombre, label, valor) in campos)
+                                                                {
+                                                                    <div class="col-md-3 app-form-group">
+                                                                        <label class="app-form-label">@label</label>
+                                                                        <input type="text" class="app-form-control"
+                                                                               name="@nombre" value="@valor" />
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </details>
+                                                    </div>
+
+                                                    <div class="app-modal__footer">
+                                                        <button type="button"
+                                                                class="app-btn app-btn--success btn-guardar-modal"
+                                                                data-id="@item.IdVenta">
+                                                            Guardar
+                                                        </button>
+                                                        <button type="button"
+                                                                class="app-btn app-btn--outline"
+                                                                data-dismiss="modal">
+                                                            Cerrar
+                                                        </button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
-           
-                                    
-                                    
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 }
 
-
-
-
+<!-- ===================== Correctas ===================== -->
 @if (Model.ventasCorrectas.Any())
 {
-    <div class="container-fluid my-5">
-        <div class="card shadow-lg border-success">
-            <div class="card-header bg-success text-white">
+    <div class="app-card app-card--success app-mt-5">
+        <div class="app-card__header app-card__header--success">
+            <h5 class="app-card__title">
                 <i class="fas fa-check-double me-2"></i>
-                <strong>Facturas Cargadas Correctamente (@Model.ventasCorrectas.Count())</strong>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table id="ventasCorrectas" class="table table-striped table-hover m-0">
-                        <thead class="table-dark">
+                Facturas cargadas correctamente: @Model.ventasCorrectas.Count()
+            </h5>
+        </div>
+        <div class="app-card__body p-0">
+            <div class="table-responsive">
+                <table id="ventasCorrectas" class="app-table app-table--striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo de Factura</th>
+                            <th>Punto de Venta</th>
+                            <th>Número Desde</th>
+                            <th>Número Documento Comprador</th>
+                            <th>Denominación Comprador</th>
+                            <th>Moneda</th>
+                            <th>Neto Gravado</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ventasCorrectas)
+                        {
                             <tr>
-                                <th>Fecha</th>
-                                <th>Tipo de Factura</th>
-                                <th>Punto de Venta</th>
-                                <th>Numero Desde</th>
-                                <th>Numero Documento Comprador</th>
-                                <th>Denominacion Comprador</th>
-                                <th>Moneda</th>
-                                <th>Neto Gravado</th>
-                                <th>Iva</th>
-                                <th>Total</th>
-                                <th class="text-center">Acciones</th>
+                                <td>@Html.DisplayFor(m => item.Fecha)</td>
+                                <td>@Html.DisplayFor(m => item.TipoFact)</td>
+                                <td>@Html.DisplayFor(m => item.PuntoVenta)</td>
+                                <td>@Html.DisplayFor(m => item.NroDesde)</td>
+                                <td>@Html.DisplayFor(m => item.NroDocComprador)</td>
+                                <td>@Html.DisplayFor(m => item.DenomComprador)</td>
+                                <td>@Html.DisplayFor(m => item.Moneda)</td>
+                                <td>@Html.DisplayFor(m => item.NetoGravado)</td>
+                                <td>@Html.DisplayFor(m => item.Iva)</td>
+                                <td>@Html.DisplayFor(m => item.Total)</td>
+                                <td class="text-center">
+                                    <button type="button"
+                                            class="app-btn app-btn--outline app-btn--sm"
+                                            data-toggle="modal"
+                                            data-target="#modalInfo_@item.IdVenta"
+                                            title="+Info">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ventasCorrectas)
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(m => item.Fecha)</td>
-                                    <td>@Html.DisplayFor(m => item.TipoFact)</td>
-                                    <td>@Html.DisplayFor(m => item.PuntoVenta)</td>
-                                    <td>@Html.DisplayFor(m => item.NroDesde)</td>
-                                    <td>@Html.DisplayFor(m => item.NroDocComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.DenomComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.Moneda)</td>
-                                    <td>@Html.DisplayFor(m => item.NetoGravado)</td>
-                                    <td>@Html.DisplayFor(m => item.Iva)</td>
-                                    <td>@Html.DisplayFor(m => item.Total)</td>
-                                    <td>
-                                        <div class="btn-group" role="group" aria-label="Acciones de Venta">
-                                            @* Botón para abrir el modal de info *@
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#modalEdit_@item.IdVenta" title="+Info">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 }
+
+<!-- ===================== Fallidas ===================== -->
 @if (Model.ventasFallidas.Any())
 {
-    <div class="container-fluid my-5">
-        <div class="card shadow-lg border-danger">
-            <div class="card-header bg-danger text-white">
-                <i class="fas fa-check-double me-2"></i>
-                <strong>Facturas que No se agregaron (@Model.ventasFallidas.Count())</strong>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table id="ventasFallidas" class="table table-striped table-hover m-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Tipo de Factura</th>
-                                <th>Punto de Venta</th>
-                                <th>Numero Desde</th>
-                                <th>Numero Documento Comprador</th>
-                                <th>Denominacion Comprador</th>
-                                <th>Moneda</th>
-                                <th>Neto Gravado</th>
-                                <th>Iva</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ventasFallidas)
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(m => item.Fecha)</td>
-                                    <td>@Html.DisplayFor(m => item.TipoFact)</td>
-                                    <td>@Html.DisplayFor(m => item.PuntoVenta)</td>
-                                    <td>@Html.DisplayFor(m => item.NroDesde)</td>
-                                    <td>@Html.DisplayFor(m => item.NroDocComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.DenomComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.Moneda)</td>
-                                    <td>@Html.DisplayFor(m => item.NetoGravado)</td>
-                                    <td>@Html.DisplayFor(m => item.Iva)</td>
-                                    <td>@Html.DisplayFor(m => item.Total)</td>
-                                    
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+    <div class="app-card app-card--danger app-mt-5">
+        <div class="app-card__header app-card__header--danger">
+            <h5 class="app-card__title">
+                <i class="fas fa-times-circle me-2"></i>
+                Facturas que no se agregaron: @Model.ventasFallidas.Count()
+            </h5>
+        </div>
+        <div class="app-card__body p-0">
+            <div class="table-responsive">
+                <table id="ventasFallidas" class="app-table app-table--striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo de Factura</th>
+                            <th>Punto de Venta</th>
+                            <th>Número Desde</th>
+                            <th>Número Documento Comprador</th>
+                            <th>Denominación Comprador</th>
+                            <th>Moneda</th>
+                            <th>Neto Gravado</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ventasParaRevisar)
+                        {
+                        <td>@item.Fecha</td>
+                        <td>@item.TipoFact</td>
+                        <td>@item.PuntoVenta</td>
+                        <td>@item.NroDesde</td>
+                        <td>@item.NroDocComprador</td>
+                        <td>@item.DenomComprador</td>
+                        <td>@item.Moneda</td>
+                        <td>@item.NetoGravado</td>
+                        <td>@item.Iva</td>
+                        <td>@item.Total</td>
+                    }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 }
-<div class="mt-2">
+
+<!-- Botón volver -->
+<div class="app-mt-4">
     <a asp-controller="Cliente"
        asp-action="Details"
        asp-route-id="@Model.id"
-       class="btn btn-light border border-secondary text-muted">
-        <i class="fas fa-arrow-left me-2"></i> Volver
+       class="app-btn app-btn--outline">
+        <i class="fas fa-arrow-left"></i> Volver
     </a>
 </div>
 
 @section Scripts {
-    <script src="~/js/ventas.js"></script>
-    <script>
-       
-        $(document).ready(function () {
-         
-            if ($.fn.DataTable.isDataTable('#ventasParaRevisar')) {
-                $('#ventasParaRevisar').DataTable().destroy();
-            }
-            $('#ventasParaRevisar').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" 
-                },
-                "paging": true,     
-                "ordering": true,    
-                "info": true,        
-                "searching": true    
-            });
-
-            // Para "ventasCorrectas"
-            if ($.fn.DataTable.isDataTable('#ventasCorrectas')) {
-                $('#ventasCorrectas').DataTable().destroy();
-            }
-            $('#ventasCorrectas').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-                },
-                "paging": true,
-                "ordering": true,
-                "info": true,
-                "searching": true
-            });
-            // Para "ventasFallidas"
-            if ($.fn.DataTable.isDataTable('#ventasFallidas')) {
-                $('#ventasFallidas').DataTable().destroy();
-            }
-            $('#ventasFallidas').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-                },
-                "paging": true,
-                "ordering": true,
-                "info": true,
-                "searching": true
-            });
-        });
-
-
-
-         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('formCargaExcel');
-            const fileInput = document.getElementById('file');
-            const fileValidationErrorDiv = document.getElementById('fileValidationError');
-            const btnCargar = document.getElementById('btnCargar');
-            const allowedExtensions = /\.(xlsx|xls|csv)$/i;
-
-            form.addEventListener('submit', function (e) {
-                // Limpiar errores previos
-                fileInput.classList.remove('is-invalid');
-                fileValidationErrorDiv.style.display = 'none';
-
-                // Validaciones
-                if (fileInput.files.length === 0) {
-                    e.preventDefault();
-                    fileInput.classList.add('is-invalid');
-                    fileValidationErrorDiv.textContent = 'Por favor, selecciona un archivo.';
-                    fileValidationErrorDiv.style.display = 'block';
-                    return;
-                }
-
-                if (!allowedExtensions.test(fileInput.value)) {
-                    e.preventDefault();
-                    fileInput.classList.add('is-invalid');
-                    fileValidationErrorDiv.textContent = 'Formato de archivo no válido. Solo se permiten .xlsx, .xls o .csv.';
-                    fileValidationErrorDiv.style.display = 'block';
-                    fileInput.value = '';
-                    return;
-                }
-
-                // Si pasa la validación, mostramos el modal y desactivamos el botón
-                btnCargar.disabled = true;
-                const modal = new bootstrap.Modal(document.getElementById('modalCargando'));
-                modal.show();
-            });
-
-            // Drag & Drop (opcional y visual)
-            const dropZone = fileInput.closest('.mb-3');
-            dropZone.addEventListener('dragover', function (e) {
-                e.preventDefault();
-                dropZone.classList.add('border', 'border-primary', 'bg-light');
-            });
-            dropZone.addEventListener('dragleave', function () {
-                dropZone.classList.remove('border', 'border-primary', 'bg-light');
-            });
-            dropZone.addEventListener('drop', function () {
-                dropZone.classList.remove('border', 'border-primary', 'bg-light');
-            });
-        });
-    </script>
-
-
-
-    
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/ventas.js" asp-append-version="true"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

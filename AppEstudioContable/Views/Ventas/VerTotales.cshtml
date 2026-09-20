@@ -1,75 +1,95 @@
 ﻿@model Dictionary<string, ServiciosEC.Utilidades.ModelosDTO.TotalesIVA>
 @{
-    ViewData["Title"] = "Totales por Comprobantes";
+    ViewData["Title"] = "Totales por Comprobante — Ventas";
 }
 
-<section class="content-header">
-    <div class="container-xl">
-        <div class="row justify-content-center mt-3 mb-4">
-            <div class="col-md-8 text-center">
-                <h2 class="text-dark fw-light mb-0">
-                   <i class="fas fa-file-invoice-dollar me-2 text-gray"></i>
-                    Totales por Tipo de Comprobante
-                </h2>
+<div class="text-center app-mt-4 app-mb-4">
+    <h2 class="app-title">
+        <i class="fas fa-file-invoice-dollar me-2"></i>
+        Totales por Tipo de Comprobante — Ventas
+    </h2>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <!-- 🔴 ESTADO VACÍO -->
+    <div class="app-empty">
+        <i class="fas fa-inbox"></i>
+        <h4>No hay ventas cargadas en el período</h4>
+        <p>
+            No se encontraron comprobantes para el CUIT <strong>@ViewBag.Cuit</strong>
+            @if (ViewBag.MesSeleccionado > 0)
+            {
+                <text> en el mes <strong>@ViewBag.MesSeleccionado</strong></text>
+            }
+            @if (ViewBag.AnoSeleccionado > 0)
+            {
+                <text> del año <strong>@ViewBag.AnoSeleccionado</strong></text>
+            }
+    .
+        </p>
+        <a asp-controller="Ventas"
+           asp-action="Index"
+           asp-route-cuit="@ViewBag.Cuit"
+           class="app-btn app-btn--primary app-mt-4">
+            <i class="fas fa-arrow-left"></i> Volver a Ventas
+        </a>
+    </div>
+}
+else
+{
+
+@foreach (var item in Model)
+{
+    <div class="app-card app-mb-4">
+        <div class="app-card__header">
+            <h5 class="app-card__title">
+                <i class="fas fa-file-invoice-dollar me-2"></i>
+                Factura Tipo: <strong>@item.Key</strong>
+            </h5>
+        </div>
+        <div class="app-card__body p-0">
+            <div class="table-responsive">
+                <table class="app-table app-table--striped">
+                    <thead>
+                        <tr>
+                            <th>Gravado 27%</th>
+                            <th>Gravado 21%</th>
+                            <th>Gravado 10.5%</th>
+                            <th>Exento</th>
+                            <th>No gravado</th>
+                            <th>IVA 27%</th>
+                            <th>IVA 21%</th>
+                            <th>IVA 10.5%</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@item.Value.Neto27.ToString("C")</td>
+                            <td>@item.Value.Neto21.ToString("C")</td>
+                            <td>@item.Value.Neto105.ToString("C")</td>
+                            <td>@item.Value.Exento.ToString("C")</td>
+                            <td>@item.Value.NoGravado.ToString("C")</td>
+                            <td>@item.Value.Iva27.ToString("C")</td>
+                            <td>@item.Value.Iva21.ToString("C")</td>
+                            <td>@item.Value.Iva105.ToString("C")</td>
+                            <td class="app-table__totals">@item.Value.TotalGeneral.ToString("C")</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</section>
+}
 
-<section class="content">
-    <div class="container-xl">
-
-        @foreach (var item in Model)
-        {
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0 text-dark">
-                        <i class="fas fa-file-invoice-dollar me-2 text-gray"></i>
-                        Factura Tipo: <strong>@item.Key</strong>
-                    </h5>
-                </div>
-
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover mb-0">
-                            <thead class="table-light text-center">
-                                <tr>
-                                    <th>Gravado 27%</th>
-                                    <th>Gravado 21%</th>
-                                    <th>Gravado 10.5%</th>
-                                    <th>Exento</th>
-                                    <th>No gravado</th>
-                                    <th>IVA 27%</th>
-                                    <th>IVA 21%</th>
-                                    <th>IVA 10.5%</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="text-center text-dark fw-semibold">
-                                    <td>@item.Value.Neto27.ToString("C")</td>
-                                    <td>@item.Value.Neto21.ToString("C")</td>
-                                    <td>@item.Value.Neto105.ToString("C")</td>
-                                    <td>@item.Value.Exento.ToString("C")</td>
-                                    <td>@item.Value.NoGravado.ToString("C")</td>
-                                    <td>@item.Value.Iva27.ToString("C")</td>
-                                    <td>@item.Value.Iva21.ToString("C")</td>
-                                    <td>@item.Value.Iva105.ToString("C")</td>
-                                    <td class="bg-light">@item.Value.TotalGeneral.ToString("C")</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</section>
-
-<div class="container-xl mb-5">
-    <div class="d-flex justify-content-start">
-        <a asp-action="Index" asp-route-cuit="@ViewBag.Cuit" class="btn btn-outline-secondary btn-lg px-4">
-            <i class="fas fa-arrow-left me-2"></i> Volver
-        </a>
-    </div>
+<div class="app-mt-4">
+    <a asp-controller="Ventas"
+       asp-action="Index"
+       asp-route-cuit="@ViewBag.Cuit"
+       class="app-btn app-btn--outline">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
 </div>
+
+}                          

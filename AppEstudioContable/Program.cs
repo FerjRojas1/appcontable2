@@ -1,4 +1,4 @@
-using ServiciosEC.Interfaces;
+Ôªøusing ServiciosEC.Interfaces;
 using ServiciosEC.Managers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ServiciosEC.Models;
@@ -19,8 +19,14 @@ builder.Services.AddControllersWithViews(options =>
 {
     
     options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(
-        _ => "El valor ingresado debe ser un n˙mero v·lido.");
+        _ => "El valor ingresado debe ser un n√∫mero v√°lido.");
 });
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 
 //builder.Services.AddScoped<EstadoManager>();
 //builder.Services.AddScoped<PersonaManager>();
@@ -84,7 +90,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.AccessDeniedPath = "/Home/Error403";
 });
 
-// ConfiguraciÛn de la polÌtica de autorizaciÛn
+// Configuraci√≥n de la pol√≠tica de autorizaci√≥n
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -93,6 +99,33 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+//  Aplicar migraciones autom√°ticamente al arrancar
+if (!app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ECContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        try
+        {
+            logger.LogInformation("Aplicando migraciones...");
+            db.Database.Migrate();
+            logger.LogInformation("Migraciones aplicadas correctamente.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error al aplicar migraciones: {Message}", ex.Message);
+            throw;
+        }
+    }
+}
+else
+{
+    // En desarrollo, solo logueamos
+    Console.WriteLine("Entorno de desarrollo: omitiendo migraciones autom√°ticas.");
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

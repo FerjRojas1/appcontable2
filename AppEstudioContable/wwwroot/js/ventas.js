@@ -2,199 +2,249 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-
-
-
+    // ---------- Utilidades ----------
     const getCuitCliente = () => {
-
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('cuit')) {
-            return urlParams.get('cuit');
-        }
+        if (urlParams.has('cuit')) return urlParams.get('cuit');
 
         const cuitHiddenInput = document.getElementById('clienteCuit');
-        if (cuitHiddenInput) {
-            return cuitHiddenInput.value;
-        }
-        return '';
+        return cuitHiddenInput ? cuitHiddenInput.value : '';
     };
 
     const clienteCuit = getCuitCliente();
 
+    const buildUrl = (baseUrl, mes, ano, cuit) => {
+        const params = [];
+        if (cuit) params.push(cuit);
+        if (ano) params.push(ano);
+        if (mes) params.push(mes);
 
+        return params.length > 0
+            ? `${baseUrl}/${params.join('/')}`
+            : baseUrl;
+    };
+
+    // ---------- Filtros de período ----------
     const mesInput = document.getElementById('mesInput');
     const anoInput = document.getElementById('anoInput');
 
-    if (!mesInput || !anoInput)
-        return
+    if (mesInput && anoInput) {
+        // Validación mes
+        mesInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '').substring(0, 2);
+            if (parseInt(this.value) > 12) this.value = '12';
+            else if (parseInt(this.value) < 1 && this.value.length === 2) this.value = '01';
+        });
 
-    
-    const buildUrl = (baseUrl, mes, ano, cuit) => {
-        console.log(baseUrl)
-        const params = []; 
+        // Validación año
+        anoInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4);
+        });
 
-        if (cuit) {
-            params.push(cuit); 
+        // Botón: Listado
+        const filtrarListadoBtn = document.getElementById('filtrarListadoBtn');
+        if (filtrarListadoBtn) {
+            filtrarListadoBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = buildUrl('/Ventas/lista', mesInput.value, anoInput.value, clienteCuit);
+                window.location.href = url;
+            });
         }
-        if (ano) { 
-            params.push(ano);
+
+        // Botón: Total Neto
+        const verTotalNetoBtn = document.getElementById('verTotalNetoBtn');
+        if (verTotalNetoBtn) {
+            verTotalNetoBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = buildUrl('/Ventas/VerNeto', mesInput.value, anoInput.value, clienteCuit);
+                window.location.href = url;
+            });
         }
-        if (mes) { 
-            params.push(mes);
+
+        // Botón: Totales por comprobante
+        const verTotalesComprobanteBtn = document.getElementById('verTotalesComprobanteBtn');
+        if (verTotalesComprobanteBtn) {
+            verTotalesComprobanteBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = buildUrl('/Ventas/VerTotales', mesInput.value, anoInput.value, clienteCuit);
+                window.location.href = url;
+            });
         }
 
-        let url = baseUrl
-        if (params.length > 0) {
-            url += '/' + params.join('/');
+        // Botón: Limpiar filtros
+        const limpiarFiltrosBtn = document.getElementById('limpiarFiltrosBtn');
+        if (limpiarFiltrosBtn) {
+            limpiarFiltrosBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                mesInput.value = '';
+                anoInput.value = '';
+                const url = buildUrl('/Ventas/lista', '', '', clienteCuit);
+                window.location.href = url;
+            });
         }
-        return url;
-    };
-   
+    }
 
+    // ---------- Inicialización de DataTables ----------
+    if ($.fn.DataTable) {
+        const dtOptions = {
+            paging: true,
+            lengthChange: true,
+            searching: true,       // 🔍 Buscador
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+            }
+        };
 
+        const tablas = [
+            '#tablaVentas',            // Index de Ventas
+            '#ventasParaRevisar',      // Altas: para revisar
+            '#ventasCorrectas',        // Altas: correctas
+            '#ventasFallidas'          // Altas: fallidas
+        ];
 
-
-    const filtrarListadoBtn = document.getElementById('filtrarListadoBtn');
-    if (filtrarListadoBtn) {
-        filtrarListadoBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const mes = mesInput.value;
-            const ano = anoInput.value;
-            const url = buildUrl('/Ventas/lista', mes, ano, clienteCuit);
-            window.location.href = url;
+        tablas.forEach(sel => {
+            if (document.querySelector(sel) && !$.fn.DataTable.isDataTable(sel)) {
+                $(sel).DataTable(dtOptions);
+            }
         });
     }
 
+    // ---------- Validación del form de carga Excel ----------
+    const form = document.getElementById('formCargaExcel');
+    if (form) {
+        const fileInput = document.getElementById('file');
+        const fileValidationErrorDiv = document.getElementById('fileValidationError');
+        const btnCargar = document.getElementById('btnCargar');
+        const allowedExtensions = /\.(xlsx|xls|csv)$/i;
 
-    const verTotalNetoBtn = document.getElementById('verTotalNetoBtn');
-    if (verTotalNetoBtn) {
-        verTotalNetoBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const mes = mesInput.value;
-            const ano = anoInput.value;
+        form.addEventListener('submit', function (e) {
+            fileInput.classList.remove('is-invalid');
+            if (fileValidationErrorDiv) fileValidationErrorDiv.style.display = 'none';
 
-            const url = buildUrl('/Ventas/VerNeto', mes, ano, clienteCuit);
-            window.location.href = url;
+            if (fileInput.files.length === 0) {
+                e.preventDefault();
+                fileInput.classList.add('is-invalid');
+                if (fileValidationErrorDiv) {
+                    fileValidationErrorDiv.textContent = 'Por favor, seleccioná un archivo.';
+                    fileValidationErrorDiv.style.display = 'block';
+                }
+                return;
+            }
+
+            if (!allowedExtensions.test(fileInput.value)) {
+                e.preventDefault();
+                fileInput.classList.add('is-invalid');
+                if (fileValidationErrorDiv) {
+                    fileValidationErrorDiv.textContent = 'Formato no válido. Solo se permiten .xlsx, .xls o .csv.';
+                    fileValidationErrorDiv.style.display = 'block';
+                }
+                fileInput.value = '';
+                return;
+            }
+
+            if (btnCargar) btnCargar.disabled = true;
+
+            // Bootstrap 4 (AdminLTE 3)
+            $('#modalCargando').modal('show');
         });
-    }
 
-
-    const verTotalesComprobanteBtn = document.getElementById('verTotalesComprobanteBtn');
-    if (verTotalesComprobanteBtn) {
-        verTotalesComprobanteBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const mes = mesInput.value;
-            const ano = anoInput.value;
-
-            const url = buildUrl('/Ventas/VerTotales', mes, ano, clienteCuit);
-            window.location.href = url;
-        });
-    }
-
-
-    const limpiarFiltrosBtn = document.getElementById('limpiarFiltrosBtn');
-    if (limpiarFiltrosBtn) {
-        limpiarFiltrosBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            mesInput.value = '';
-            anoInput.value = ''; 
-            const url = buildUrl('/Ventas/lista', '', '', clienteCuit); 
-            window.location.href = url;
-        });
-    }
-
-
-    mesInput.addEventListener('input', function () {
-        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 2); 
-        if (parseInt(this.value) > 12) {
-            this.value = '12'; 
-        } else if (parseInt(this.value) < 1 && this.value.length === 2) {
-            this.value = '01'; 
+        // Drag & Drop visual
+        const dropZone = fileInput.closest('.app-form-group') || fileInput.closest('.mb-3');
+        if (dropZone) {
+            dropZone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropZone.classList.add('border', 'border-primary', 'bg-light');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('border', 'border-primary', 'bg-light');
+            });
+            dropZone.addEventListener('drop', () => {
+                dropZone.classList.remove('border', 'border-primary', 'bg-light');
+            });
         }
-    });
-
-    anoInput.addEventListener('input', function () {
-        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4); 
-    });
+    }
 
 });
 
+// ---------- Guardar edición de venta desde el modal ----------
+document.body.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-guardar-modal');
+    if (!btn) return;
 
-document.body.addEventListener("click", function (e) {
-    const btn = e.target.closest(".btn-guardar-modal");
-    if (btn) {
-        console.log("Clic en botón Guardar detectado", btn);
+    const idVenta = btn.getAttribute('data-id');
+    const modal = document.getElementById('modalEdit_' + idVenta);
+    if (!modal) return;
 
-        const idVenta = btn.getAttribute('data-id');
-        const modal = document.getElementById('modalEdit_' + idVenta);
+    const getInputValue = (name) =>
+        parseFloat(modal.querySelector(`input[name="${name}"]`)?.value.replace(',', '.') || '0');
 
-        const getInputValue = (name) => parseFloat(modal.querySelector(`input[name="${name}"]`)?.value.replace(',', '.') || '0');
+    const total = getInputValue('Total');
+    const netoGravado = getInputValue('NetoGravado');
+    const noGravado = getInputValue('NoGravado');
+    const exento = getInputValue('Exento');
+    const iva = getInputValue('Iva');
+    const iva0 = getInputValue('Iva0');
+    const iva25 = getInputValue('Iva25');
+    const iva5 = getInputValue('Iva5');
+    const iva105 = getInputValue('Iva105');
+    const iva21 = getInputValue('Iva21');
+    const iva27 = getInputValue('Iva27');
+    const grav0 = getInputValue('Grav0');
+    const grav25 = getInputValue('Grav25');
+    const grav5 = getInputValue('Grav5');
+    const grav105 = getInputValue('Grav105');
+    const grav21 = getInputValue('Grav21');
+    const grav27 = getInputValue('Grav27');
 
-        const total = getInputValue('Total');
-        const netoGravado = getInputValue('NetoGravado');
-        const noGravado = getInputValue('NoGravado');
-        const exento = getInputValue('Exento');
-        const iva = getInputValue('Iva');
-        const iva0 = getInputValue('Iva0');
-        const iva25 = getInputValue('Iva25');
-        const iva5 = getInputValue('Iva5');
-        const iva105 = getInputValue('Iva105');
-        const iva21 = getInputValue('Iva21');
-        const iva27 = getInputValue('Iva27');
-        const grav0 = getInputValue('Grav0');
-        const grav25 = getInputValue('Grav25');
-        const grav5 = getInputValue('Grav5');
-        const grav105 = getInputValue('Grav105');
-        const grav21 = getInputValue('Grav21');
-        const grav27 = getInputValue('Grav27');
+    const tolerancia = 0.1;
 
-        const tolerancia = 0.1;
+    const totalValido = Math.abs(total - (netoGravado + iva + exento + noGravado)) < tolerancia;
+    const ivaValido = Math.abs(iva - (iva0 + iva25 + iva5 + iva105 + iva21 + iva27)) < tolerancia;
+    const netoValido = Math.abs(netoGravado - (grav0 + grav25 + grav5 + grav105 + grav21 + grav27)) < tolerancia;
 
-        const totalCalculado = netoGravado + iva + exento + noGravado;
-        const totalValido = Math.abs(total - totalCalculado) < tolerancia;
-
-        const ivaDesglose = iva0 + iva25 + iva5 + iva105 + iva21 + iva27;
-        const ivaValido = Math.abs(iva - ivaDesglose) < tolerancia;
-
-        const netoDesglose = grav0 + grav25 + grav5 + grav105 + grav21 + grav27;
-        const netoValido = Math.abs(netoGravado - netoDesglose) < tolerancia;
-
-        if (!totalValido) {
-            alert("El Total no coincide con la suma de Neto Gravado + IVA + Exento + No Gravado.");
-            return;
-        }
-
-        if (!ivaValido || !netoValido) {
-            alert("La suma de IVA o Neto Gravado desglosado no coincide con los valores totales.");
-            return;
-        }
-
-        const formData = new FormData(modal.querySelector('form'));
-        const data = new URLSearchParams();
-        for (const pair of formData) {
-            data.append(pair[0], pair[1]);
-        }
-
-        fetch('/Ventas/Edit2', {
-            method: 'POST',
-            body: data,
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Error al guardar en el servidor');
-                return response.json();
-            })
-            .then(result => {
-                if (result.success) {
-                    alert("Venta actualizada correctamente.");
-                    $('#modalEdit_' + idVenta).modal('hide');
-                    btn.closest('tr').remove();
-                } else {
-                    alert("Error: " + (result.message || "No se pudo actualizar."));
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                alert("Error al guardar la venta." + error.message);
-            });
+    if (!totalValido) {
+        alert("El Total no coincide con la suma de Neto Gravado + IVA + Exento + No Gravado.");
+        return;
     }
+    if (!ivaValido || !netoValido) {
+        alert("La suma de IVA o Neto Gravado desglosado no coincide con los valores totales.");
+        return;
+    }
+
+    const formData = new FormData(modal.querySelector('form'));
+    const data = new URLSearchParams();
+    for (const pair of formData) data.append(pair[0], pair[1]);
+
+    fetch('/Ventas/Edit2', { method: 'POST', body: data })
+        .then(response => {
+            if (!response.ok) throw new Error('Error al guardar en el servidor');
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                alert("Venta actualizada correctamente.");
+                $('#modalEdit_' + idVenta).modal('hide');
+
+                // Eliminar fila de DataTables correctamente
+                const $row = $(btn).closest('tr');
+                const $tabla = $row.closest('table');
+                if ($.fn.DataTable.isDataTable($tabla)) {
+                    $tabla.DataTable().row($row).remove().draw(false);
+                } else {
+                    $row.remove();
+                }
+            } else {
+                alert("Error: " + (result.message || "No se pudo actualizar."));
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Error al guardar la venta: " + error.message);
+        });
 });

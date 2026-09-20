@@ -17,5 +17,6 @@ namespace ServiciosEC.Interfaces.Managers
         Task<List<Compra>> ObtenerComprasPorClientePeriodoAsync(int idPersona, int mes, int ano, CancellationToken cancellationToken);
         Task<bool> ValidarTotales(Compra compraNueva, CancellationToken cancellationToken);
         Task<bool> ValidacionIvaGravadoDesglosado(Compra compraNueva, CancellationToken cancellationToken);
+        Task<Dictionary<string, TotalesIVA>> ObtenerTotalesPorTipoComprobante(Cliente cliente, int mes, int ano);
     }
 }

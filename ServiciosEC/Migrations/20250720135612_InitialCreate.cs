@@ -147,7 +147,7 @@ namespace ServiciosEC.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Personas__228148B0F120C233", x => x.id_persona);
+                    table.PrimaryKey("PK_Clientes", x => x.id_persona);
                     table.ForeignKey(
                         name: "FK_Clientes_Personas_id_persona",
                         column: x => x.id_persona,
@@ -241,7 +241,7 @@ namespace ServiciosEC.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Personas__228148B0F120C233", x => x.id_persona);
+                    table.PrimaryKey("PK_Usuarios", x => x.id_persona);
                     table.ForeignKey(
                         name: "FK_Usuarios_Personas_id_persona",
                         column: x => x.id_persona,

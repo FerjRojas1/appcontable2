@@ -1,124 +1,68 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AppContable</title>
 
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="~/adminlte/plugins/fontawesome-free/css/all.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="~/adminlte/dist/css/adminlte.min.css">
-    <!-- Google Font: Source Sans Pro -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <!-- Fuente -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
+    <!-- AdminLTE (base) -->
+    <link rel="stylesheet" href="~/adminlte/plugins/fontawesome-free/css/all.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/adminlte/dist/css/adminlte.min.css" asp-append-version="true" />
 
-    <link rel="stylesheet" href="~/adminlte/plugins/fullcalendar/main.min.css">
-    <link rel="stylesheet" href="~/adminlte/plugins/fullcalendar-daygrid/main.min.css">
-    <link rel="stylesheet" href="~/adminlte/plugins/fullcalendar-timegrid/main.min.css">
-    <link rel="stylesheet" href="~/adminlte/plugins/fullcalendar-bootstrap/main.min.css">
-
-
-
-    @* Datatable *@
-    @* <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" /> *@
-    <!-- DataTables CSS base -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- Extensión Buttons CSS (para los botones exportar) -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-    
-    <!--begin::Third Party Plugin(Bootstrap Icons)-->
+    <!-- Bootstrap Icons (CDN, no necesita asp-append-version) -->
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
           crossorigin="anonymous" />
-    <!--end::Third Party Plugin(Bootstrap Icons)-->
 
-    <link rel="stylesheet" href="~/css/custom-buttons.css"/>
-    <link rel="stylesheet" href="~/css/site.css" />
+    <!-- Design System del proyecto -->
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
+    @await RenderSectionAsync("Styles", required: false)
 
-    @RenderSection("Styles", required: false)
+ 
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
-   <div class="wrapper">
+    <div class="wrapper">
 
-        
         <!-- Navbar -->
         <partial name="_Navbar" />
 
-                        
-        <div class="content-wrapper">
-            <!-- Main Sidebar Container -->
-            <partial name ="_Sidebar" />
+        <!-- Sidebar -->
+        <partial name="_Sidebar" />
 
-                <!-- Content Wrapper -->
-                <div class="content-header">
-                    <div class="content-header px-0">
-                        @RenderSection("ClienteNavbar", required: false)
-                    </div>
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+
+            <!-- Header opcional (navbar de cliente, breadcrumbs, etc.) -->
+            @await RenderSectionAsync("ClienteNavbar", required: false)
+
+            <!-- Contenido de la vista -->
+            <section class="content">
+                <div class="container-fluid">
+                    <partial name="_AlertTempData" />
+                    @RenderBody()
                 </div>
-         
-              <!-- Main content -->
-  
-                <div class="content">
-                
-                     <div class="container-fluid">
-                            @RenderBody()      
-                    </div>
-               </div>
+            </section>
         </div>
+
+        <!-- Footer -->
+        <partial name="_Footer" />
+
     </div>
 
-    <!-- Footer -->
-            <partial name="_Footer" />
-       
+    <!-- Scripts base -->
+    <script src="~/adminlte/plugins/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/dist/js/adminlte.min.js" asp-append-version="true"></script>
 
 
-    <!-- jQuery -->
-    <script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
-    
-    <script src="~/adminlte/plugins/jquery-ui/jquery-ui.min.js"></script>
-
-    <script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-   
-    <script src="~/adminlte/dist/js/adminlte.min.js"></script>
-
-    <!-- Bootstrap 4 -->
-    @*  <script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>*@
-    <!-- AdminLTE App -->
-    @*   <script src="~/adminlte/dist/js/adminlte.min.js"></script>*@
-    <!-- Datatable -->
-    @* <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script> *@
-
-    <!-- jQuery (para DataTables) -->
-    <!--<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>-->
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-    <!-- Buttons extension JS -->
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-
-    <!-- Botones HTML5 para exportar (Excel, CSV, PDF, imprimir) -->
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-
-    <!-- Librerías opcionales para exportar Excel y PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    
-    <script src="~/adminlte/plugins/moment/moment.min.js"></script>
-    <script src="~/adminlte/plugins/fullcalendar/main.min.js"></script>
-    <script src="~/adminlte/plugins/fullcalendar-daygrid/main.min.js"></script>
-    <script src="~/adminlte/plugins/fullcalendar-timegrid/main.min.js"></script>
-    <script src="~/adminlte/plugins/fullcalendar-interaction/main.min.js"></script>
-    <script src="~/adminlte/plugins/fullcalendar-bootstrap/main.min.js"></script>
-    <script src="~/adminlte/plugins/fullcalendar-locales/es.js"></script>
-    <script src="~/adminlte/plugins/chart.js/Chart.min.js"></script>
-
-
+    <!-- Sección para scripts específicos de la vista -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

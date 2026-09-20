@@ -1,0 +1,152 @@
+﻿/* =========================================================
+   LAYOUT — Navbar, Sidebar, Footer, Content wrapper
+   ========================================================= */
+
+/* ---------- Navbar ---------- */
+.app-navbar {
+    background-color: var(--app-surface);
+    border-bottom: 1px solid var(--app-border);
+    box-shadow: var(--app-shadow-sm);
+}
+
+    .app-navbar .nav-link {
+        color: var(--app-text);
+        transition: var(--app-transition);
+    }
+
+        .app-navbar .nav-link:hover {
+            color: var(--app-primary);
+        }
+
+/* ---------- Sidebar ---------- */
+.app-sidebar {
+    background-color: #1e293b;
+    color: #cbd5e1;
+}
+
+    .app-sidebar .brand-link {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        color: #fff;
+        padding: var(--app-space-4);
+        display: flex;
+        align-items: center;
+        gap: var(--app-space-2);
+    }
+
+        .app-sidebar .brand-link .brand-text {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+    .app-sidebar .nav-link {
+        color: #cbd5e1;
+        border-radius: var(--app-radius);
+        margin: 2px 8px;
+        transition: var(--app-transition);
+    }
+
+        .app-sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+
+        .app-sidebar .nav-link.active {
+            background-color: var(--app-primary);
+            color: #fff;
+            font-weight: 600;
+        }
+
+    .app-sidebar .nav-header {
+        color: #94a3b8;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: var(--app-space-3) var(--app-space-4);
+    }
+
+/* ---------- Content wrapper ---------- */
+.app-content-header {
+    padding: var(--app-space-4) 0;
+}
+
+    .app-content-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+.app-breadcrumb {
+    font-size: 0.875rem;
+    color: var(--app-text-muted);
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+    font-size: 0.9rem;
+    color: var(--app-text-muted);
+    padding: var(--app-space-4) 0;
+    border-top: 1px solid var(--app-border);
+    background-color: var(--app-surface);
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+.app-sidebar.main-sidebar {
+    background-color: #1e293b;
+}
+
+.app-sidebar .brand-link {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: var(--app-space-4) var(--app-space-3);
+    display: block;
+    color: #fff;
+}
+
+    .app-sidebar .brand-link .brand-text {
+        color: #fff;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+/* Items del menú */
+.app-sidebar .nav-sidebar .nav-link {
+    color: #cbd5e1;
+    border-radius: var(--app-radius);
+    margin: 2px 8px;
+    padding: 0.55rem 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: var(--app-transition);
+}
+
+    .app-sidebar .nav-sidebar .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.06);
+        color: #fff;
+    }
+
+    .app-sidebar .nav-sidebar .nav-link.active {
+        background-color: var(--app-primary);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: none;
+    }
+
+    .app-sidebar .nav-sidebar .nav-link p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+.app-sidebar .nav-sidebar .nav-icon {
+    font-size: 1.05rem;
+    width: 20px;
+    text-align: center;
+    color: inherit;
+}
+/* Footer */
+.app-footer.main-footer {
+    border-top: 1px solid var(--app-border);
+    background-color: var(--app-surface);
+    color: var(--app-text-muted);
+    font-size: 0.9rem;
+}

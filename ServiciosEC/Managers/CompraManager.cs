@@ -393,5 +393,32 @@ namespace ServiciosEC.Managers
             return false;
         }
 
+        /// <summary>
+        /// Obtiene los totales de IVA agrupados por tipo de comprobante para un cliente y período.
+        /// Si mes = 0, se consideran todas las compras del año.
+        /// </summary>
+        public async Task<Dictionary<string, TotalesIVA>> ObtenerTotalesPorTipoComprobante(Cliente cliente, int mes, int ano)
+        {
+            IQueryable<Compra> query = _context.Compras
+                .Where(c => c.IdPersona == cliente.IdPersona
+                         && c.Fecha.Year == ano
+                         && c.EstadoId == (int)ECContext.EstadosEnum.Activo);
+
+            if (mes != 0)
+                query = query.Where(c => c.Fecha.Month == mes);
+
+            var compras = await query.ToListAsync();
+
+            // Agrupar por tipo de comprobante y calcular totales de cada grupo
+            var totales = compras
+                .GroupBy(c => c.TipoFact)
+                .ToDictionary(
+                    g => g.Key,
+                    g => Calculadora.CalcularTotales(g)
+                );
+
+            return totales;
+        }
+
     }
 }

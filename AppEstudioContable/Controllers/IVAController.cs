@@ -63,6 +63,7 @@ namespace AppEstudioContable.Controllers
 
                 ViewBag.Cuit = cuit;
                 ViewBag.Id = cliente.IdPersona;
+                ViewBag.RazonSocial = cliente.RazonSocial;
 
                 return View(model);
                 //return Json(model);

@@ -84,10 +84,12 @@
                     </div>
             </div>
         </div>
+
+        
         
         <div class="mt-2">
             <a asp-action="Index" class="btn btn-secondary btn-shine">
-                Volver
+                <i class="fas fa-arrow-left"></i> Volver
             </a>
         </div>
 
@@ -95,6 +97,7 @@
 </section>
 
 @section Scripts {
+    <script src="~/adminlte/plugins/chart.js/Chart.js" asp-append-version="true"></script>
     <script>
         $(function () {
            

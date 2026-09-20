@@ -1,4 +1,10 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.app-alert--dismissible').forEach(function (el) {
+            setTimeout(function () {
+                el.classList.add('fade-out');
+                setTimeout(function () { el.remove(); }, 300);
+            }, 5000);
+        });
+    });
+</script>

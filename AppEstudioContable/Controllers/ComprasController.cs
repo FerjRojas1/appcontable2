@@ -54,6 +54,7 @@ namespace AppEstudioContable.Controllers
             ViewBag.MesSeleccionado = mes;
             ViewBag.AnioSeleccionado = anio;
             ViewBag.Id = cliente.IdPersona;
+            ViewBag.RazonSocial = cliente.RazonSocial;
 
             var meses = new[]
             {
@@ -173,11 +174,26 @@ namespace AppEstudioContable.Controllers
 
                 };
 
-                //if (await _compraManager.ExisteCompraEnFecha(compraNueva.Fecha, cancellationToken))
-                //{
-                //    ModelState.AddModelError("CompraExistente", "Ya existe una compra con los mismos datos.");
-                //    return View(model);
-                //}
+                // 👇 CÁLCULO AUTOMÁTICO EN EL SERVIDOR
+                compraNueva.Iva0 = (compraNueva.Grav0 ?? 0) * 0m;
+                compraNueva.Iva25 = (compraNueva.Grav25 ?? 0) * 0.025m;
+                compraNueva.Iva5 = (compraNueva.Grav5 ?? 0) * 0.05m;
+                compraNueva.Iva105 = (compraNueva.Grav105 ?? 0) * 0.105m;
+                compraNueva.Iva21 = (compraNueva.Grav21 ?? 0) * 0.21m;
+                compraNueva.Iva27 = (compraNueva.Grav27 ?? 0) * 0.27m;
+
+                compraNueva.NetoGravado = (compraNueva.Grav0 ?? 0) + (compraNueva.Grav25 ?? 0)
+                                        + (compraNueva.Grav5 ?? 0) + (compraNueva.Grav105 ?? 0)
+                                        + (compraNueva.Grav21 ?? 0) + (compraNueva.Grav27 ?? 0);
+
+                compraNueva.Iva = (compraNueva.Iva0 ?? 0) + (compraNueva.Iva25 ?? 0)
+                                + (compraNueva.Iva5 ?? 0) + (compraNueva.Iva105 ?? 0)
+                                + (compraNueva.Iva21 ?? 0) + (compraNueva.Iva27 ?? 0);
+
+                compraNueva.Total = (compraNueva.NetoGravado ?? 0) + (compraNueva.NoGravado ?? 0)
+                                  + (compraNueva.Exento ?? 0) + (compraNueva.Iva ?? 0);
+                // 👆 FIN DEL CÁLCULO
+
 
                 if (!await _compraManager.ValidarTotales(compraNueva, cancellationToken))
                 {
@@ -192,7 +208,7 @@ namespace AppEstudioContable.Controllers
                 if (ModelState.IsValid)
                 {
                     await _compraManager.Insertar(compraNueva, cancellationToken);
-                    TempData["MensajeExito"] = "Compra creada correctamente.";
+                    
                     return RedirectToAction(nameof(Index), new { cuit = cliente.Cuit });
                 }
                 return View(compraNueva);
@@ -228,23 +244,23 @@ namespace AppEstudioContable.Controllers
                 DenomVendedor = compra.DenomVendedor,
                 TipoCambio = compra.TipoCambio,
                 Moneda = compra.Moneda,
-                NetoGravado = compra.NetoGravado,
-                NoGravado = compra.NoGravado,
-                Exento = compra.Exento,
-                Iva = compra.Iva,
-                Total = compra.Total,
-                Grav0 = compra.Grav0,
-                Grav25 = compra.Grav25,
-                Grav5 = compra.Grav5,
-                Grav105 = compra.Grav105,
-                Grav21 = compra.Grav21,
-                Grav27 = compra.Grav27,
-                Iva0 = compra.Iva0,
-                Iva105 = compra.Iva105,
-                Iva21 = compra.Iva21,
-                Iva27 = compra.Iva27,
-                Iva25 = compra.Iva25,
-                Iva5 = compra.Iva5
+                Grav0 = Math.Round(compra.Grav0 ?? 0, 2),
+                Grav25 = Math.Round(compra.Grav25 ?? 0, 2),
+                Grav5 = Math.Round(compra.Grav5 ?? 0, 2),
+                Grav105 = Math.Round(compra.Grav105 ?? 0, 2),
+                Grav21 = Math.Round(compra.Grav21 ?? 0, 2),
+                Grav27 = Math.Round(compra.Grav27 ?? 0, 2),
+                Iva0 = Math.Round(compra.Iva0 ?? 0, 2),
+                Iva25 = Math.Round(compra.Iva25 ?? 0, 2),
+                Iva5 = Math.Round(compra.Iva5 ?? 0, 2),
+                Iva105 = Math.Round(compra.Iva105 ?? 0, 2),
+                Iva21 = Math.Round(compra.Iva21 ?? 0, 2),
+                Iva27 = Math.Round(compra.Iva27 ?? 0, 2),
+                NetoGravado = Math.Round(compra.NetoGravado ?? 0, 2),
+                NoGravado = Math.Round(compra.NoGravado ?? 0, 2),
+                Exento = Math.Round(compra.Exento ?? 0, 2),
+                Iva = Math.Round(compra.Iva ?? 0, 2),
+                Total = Math.Round(compra.Total ?? 0, 2)
             };
 
             ViewBag.cuit = cuit;
@@ -296,6 +312,25 @@ namespace AppEstudioContable.Controllers
                 compraActual.Grav21 = model.Grav21;
                 compraActual.Grav27 = model.Grav27;
 
+                // 👇 CÁLCULO AUTOMÁTICO EN EL SERVIDOR
+                compraActual.Iva0 = (compraActual.Grav0 ?? 0) * 0m;
+                compraActual.Iva25 = (compraActual.Grav25 ?? 0) * 0.025m;
+                compraActual.Iva5 = (compraActual.Grav5 ?? 0) * 0.05m;
+                compraActual.Iva105 = (compraActual.Grav105 ?? 0) * 0.105m;
+                compraActual.Iva21 = (compraActual.Grav21 ?? 0) * 0.21m;
+                compraActual.Iva27 = (compraActual.Grav27 ?? 0) * 0.27m;
+
+                compraActual.NetoGravado = (compraActual.Grav0 ?? 0) + (compraActual.Grav25 ?? 0)
+                                        + (compraActual.Grav5 ?? 0) + (compraActual.Grav105 ?? 0)
+                                        + (compraActual.Grav21 ?? 0) + (compraActual.Grav27 ?? 0);
+
+                compraActual.Iva = (compraActual.Iva0 ?? 0) + (compraActual.Iva25 ?? 0)
+                                + (compraActual.Iva5 ?? 0) + (compraActual.Iva105 ?? 0)
+                                + (compraActual.Iva21 ?? 0) + (compraActual.Iva27 ?? 0);
+
+                compraActual.Total = (compraActual.NetoGravado ?? 0) + (compraActual.NoGravado ?? 0)
+                                  + (compraActual.Exento ?? 0) + (compraActual.Iva ?? 0);
+                // 👆 FIN DEL CÁLCULO
 
                 Cliente cliente = await _clienteManager.ObtenerPorId(compraActual.IdPersona, cancellationToken);
 
@@ -316,7 +351,7 @@ namespace AppEstudioContable.Controllers
 
 
                 await _compraManager.Editar(compraActual, cancellationToken);
-                TempData["MensajeExito"] = "Compra editada correctamente.";
+               
                 return RedirectToAction(nameof(Index), new { cuit = cuit });
 
             }
@@ -423,31 +458,40 @@ namespace AppEstudioContable.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> VerTotales(DateOnly fechaDesde, DateOnly fechaHasta, CancellationToken cancellationToken)
+        /// <summary>
+        /// Permite ver los totales de IVA por cliente, mes y año.
+        /// Si el mes es 0, se consideran todas las compras del año.
+        /// </summary>
+        /// <param name="cuit"></param>
+        /// <param name="mes">Si el mes es 0, se consideran todas las compras del año.</param>
+        /// <param name="año"></param>
+        /// <returns></returns>
+        [Route("{controller}/{action}/{cuit?}/{año?}/{mes?}")]
+        public async Task<IActionResult> VerTotales(string cuit, int mes = 0, int año = 0)
         {
-            
-            if (fechaDesde > fechaHasta)
-            {
-                ModelState.AddModelError("FechaInvalida", "La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.");
-             
-                return View("~/Views/Compras/Index.cshtml", await _context.Compras.Include(c => c.Estado).Where(c => c.EstadoId == (int)ECContext.EstadosEnum.Activo).ToListAsync());
-            }
-
             try
             {
-                
-                var compras = await _compraManager.ObtenerTodasLasComprasPorFechas(fechaDesde, fechaHasta, cancellationToken);
+                var cliente = await _clienteManager.ObtenerClientePorCuitAsync(cuit, default);
 
-                var totalesIVA = Calculadora.CalcularTotalesDict(compras);
+                if (cliente == null)
+                    throw new Exception($"No se encontró ningún cliente con el id {cuit}");
 
-                return View("~/Views/Compras/VerTotales.cshtml", totalesIVA);
+                // Año por defecto si no viene
+                if (año == 0)
+                    año = DateTime.Now.Year;
+
+                var totalesIVA = await _compraManager.ObtenerTotalesPorTipoComprobante(cliente, mes, año);
+
+                ViewBag.Cuit = cuit;
+                ViewBag.MesSeleccionado = mes;
+                ViewBag.AnoSeleccionado = año;
+
+                return View(totalesIVA);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("ErrorTotales", $"Error al calcular totales: {ex.Message}");
-                
-                return View("~/Views/Compras/Index.cshtml", await _context.Compras.Include(c => c.Estado).Where(c => c.EstadoId == (int)ECContext.EstadosEnum.Activo).ToListAsync());
+                Debug.WriteLine(ex.Message);
+                return View("Error", new ErrorViewModel { Message = ex.Message });
             }
         }
 
@@ -466,6 +510,8 @@ namespace AppEstudioContable.Controllers
                 TempData["ErrorMessage"] = $"No se encontró cliente con cuit: {id}";
                 return View(model);
             }
+
+            ViewBag.RazonSocial = cliente.RazonSocial;
 
 
             return View(model);

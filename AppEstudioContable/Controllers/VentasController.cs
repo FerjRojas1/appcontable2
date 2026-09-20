@@ -51,6 +51,7 @@ namespace AppEstudioContable.Controllers
             ViewBag.MesSeleccionado = mes;
             ViewBag.AnoSeleccionado = ano;
             ViewBag.Id = cliente.IdPersona;
+            ViewBag.RazonSocial = cliente.RazonSocial;
 
             var meses = new[]
             {
@@ -227,6 +228,27 @@ namespace AppEstudioContable.Controllers
                     Grav27 = ventaModel.Grav27
 
                 };
+
+                // 👇 CÁLCULO AUTOMÁTICO EN EL SERVIDOR
+                venta.Iva0 = (venta.Grav0 ?? 0) * 0m;
+                venta.Iva25 = (venta.Grav25 ?? 0) * 0.025m;
+                venta.Iva5 = (venta.Grav5 ?? 0) * 0.05m;
+                venta.Iva105 = (venta.Grav105 ?? 0) * 0.105m;
+                venta.Iva21 = (venta.Grav21 ?? 0) * 0.21m;
+                venta.Iva27 = (venta.Grav27 ?? 0) * 0.27m;
+
+                venta.NetoGravado = (venta.Grav0 ?? 0) + (venta.Grav25 ?? 0)
+                                  + (venta.Grav5 ?? 0) + (venta.Grav105 ?? 0)
+                                  + (venta.Grav21 ?? 0) + (venta.Grav27 ?? 0);
+
+                venta.Iva = (venta.Iva0 ?? 0) + (venta.Iva25 ?? 0)
+                          + (venta.Iva5 ?? 0) + (venta.Iva105 ?? 0)
+                          + (venta.Iva21 ?? 0) + (venta.Iva27 ?? 0);
+
+                venta.Total = (venta.NetoGravado ?? 0) + (venta.NoGravado ?? 0)
+                            + (venta.Exento ?? 0) + (venta.Iva ?? 0);
+                // 👆 FIN DEL CÁLCULO
+
                 ViewBag.id = id;
                 if (!await _ventaManager.ValidarTotales(venta, cancellationToken))
                 {
@@ -241,7 +263,9 @@ namespace AppEstudioContable.Controllers
                 }
 
                 await _ventaManager.Insertar(venta, cancellationToken);
-                TempData["MensajeExito"] = "Venta creada correctamente.";
+
+                TempData["MensajeExito"] = $"Venta #{venta.PuntoVenta} - {venta.NroDesde} creada correctamente";
+
                 return RedirectToAction(nameof(Index), new { cuit = clienteAsignado.Cuit });
             }
             catch (Exception ex)
@@ -277,27 +301,28 @@ namespace AppEstudioContable.Controllers
                 DenomComprador = venta.DenomComprador,
                 TipoCambio = venta.TipoCambio,
                 Moneda = venta.Moneda,
-                NetoGravado = venta.NetoGravado,
-                NoGravado = venta.NoGravado,
-                Exento = venta.Exento,
-                Iva = venta.Iva,
-                Grav0 = venta.Grav0,
-                Grav25 = venta.Grav25,
-                Grav5 = venta.Grav5,
-                Grav105 = venta.Grav105,
-                Grav21 = venta.Grav21,
-                Grav27 = venta.Grav27,
-                Iva0 = venta.Iva0,
-                Iva25 = venta.Iva25,
-                Iva5 = venta.Iva5,
-                Iva105 = venta.Iva105,
-                Iva21 = venta.Iva21,
-                Iva27 = venta.Iva27,
-
-                Total = venta.Total,
+                Grav0 = Math.Round(venta.Grav0 ?? 0, 2),
+                Grav25 = Math.Round(venta.Grav25 ?? 0, 2),
+                Grav5 = Math.Round(venta.Grav5 ?? 0, 2),
+                Grav105 = Math.Round(venta.Grav105 ?? 0, 2),
+                Grav21 = Math.Round(venta.Grav21 ?? 0, 2),
+                Grav27 = Math.Round(venta.Grav27 ?? 0, 2),
+                Iva0 = Math.Round(venta.Iva0 ?? 0, 2),
+                Iva25 = Math.Round(venta.Iva25 ?? 0, 2),
+                Iva5 = Math.Round(venta.Iva5 ?? 0, 2),
+                Iva105 = Math.Round(venta.Iva105 ?? 0, 2),
+                Iva21 = Math.Round(venta.Iva21 ?? 0, 2),
+                Iva27 = Math.Round(venta.Iva27 ?? 0, 2),
+                NetoGravado = Math.Round(venta.NetoGravado ?? 0, 2),
+                NoGravado = Math.Round(venta.NoGravado ?? 0, 2),
+                Exento = Math.Round(venta.Exento ?? 0, 2),
+                Iva = Math.Round(venta.Iva ?? 0, 2),
+                Total = Math.Round(venta.Total ?? 0, 2),
                 id = venta.IdPersona,
                 EstadoId = venta.EstadoId
             };
+
+
 
             ViewBag.Cuit = cuit;
             ViewBag.id = ventaModel.id;
@@ -347,6 +372,27 @@ namespace AppEstudioContable.Controllers
                 venta.Total = model.Total;
                 venta.IdPersona = IdCliente;
 
+                // 👇 CÁLCULO AUTOMÁTICO EN EL SERVIDOR
+                venta.Iva0 = (venta.Grav0 ?? 0) * 0m;
+                venta.Iva25 = (venta.Grav25 ?? 0) * 0.025m;
+                venta.Iva5 = (venta.Grav5 ?? 0) * 0.05m;
+                venta.Iva105 = (venta.Grav105 ?? 0) * 0.105m;
+                venta.Iva21 = (venta.Grav21 ?? 0) * 0.21m;
+                venta.Iva27 = (venta.Grav27 ?? 0) * 0.27m;
+
+                venta.NetoGravado = (venta.Grav0 ?? 0) + (venta.Grav25 ?? 0)
+                                  + (venta.Grav5 ?? 0) + (venta.Grav105 ?? 0)
+                                  + (venta.Grav21 ?? 0) + (venta.Grav27 ?? 0);
+
+                venta.Iva = (venta.Iva0 ?? 0) + (venta.Iva25 ?? 0)
+                          + (venta.Iva5 ?? 0) + (venta.Iva105 ?? 0)
+                          + (venta.Iva21 ?? 0) + (venta.Iva27 ?? 0);
+
+                venta.Total = (venta.NetoGravado ?? 0) + (venta.NoGravado ?? 0)
+                            + (venta.Exento ?? 0) + (venta.Iva ?? 0);
+                // 👆 FIN DEL CÁLCULO
+
+
                 if (!await _ventaManager.ValidarTotales(venta, cancellationToken))
                 {
                     ModelState.AddModelError("Error", "Los totales de la venta no son válidos. Verifique los montos ingresados.");
@@ -364,7 +410,8 @@ namespace AppEstudioContable.Controllers
                 ViewBag.Cuit = cuit;
                 await _ventaManager.Editar(venta, cancellationToken);
 
-                TempData["MensajeExito"] = "Venta editada correctamente.";
+                TempData["MensajeExito"] = $"Venta #{venta.PuntoVenta} - {venta.NroDesde} editada correctamente";
+
                 return RedirectToAction(nameof(Index), new { id = IdCliente ,cuit = cuit });
             }
             catch (Exception ex)
@@ -643,6 +690,8 @@ namespace AppEstudioContable.Controllers
                 TempData["ErrorMessage"] = $"No se encontró cliente con id: {id}";
                 return View(model);
             }
+
+            ViewBag.RazonSocial = cliente.RazonSocial;
 
 
             return View(model);

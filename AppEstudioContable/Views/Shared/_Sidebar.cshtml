@@ -1,66 +1,63 @@
-﻿  <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+﻿<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4 app-sidebar">
     <!-- Brand Logo -->
     <a class="brand-link text-center py-3" asp-controller="Home" asp-action="Index">
-        <!--img src="~/adminlte/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-             style="opacity: .8"-->
-        <span class="brand-text fw-semibold  fs-5">AppContable</span>
+        <span class="brand-text fw-semibold fs-5">AppContable</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-       
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-                     with font-awesome or any other icon font library -->
-                <li class="nav-item has-treeview menu-open">
-                  @*   <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                       
-                    </a> *@
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Cliente" asp-action="Index">
-                                <i class="nav-icon bi bi-people-fill"></i>
-                                <p>
-                                    Clientes
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">                     
-                            <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
-                                <i class="nav-icon bi bi-people-fill"></i>
-                                <p>
-                                    Usuarios
-                                </p>
-                            </a>
-                       </li>                   
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="nav-icon bi bi-calendar"></i>
-                                <p>
-                                    Calendario
-                                </p>
-                            </a>
-                        </li>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Auditoria" asp-action="Index">
-                                    Ver Auditoría
-                                </a>
-                            </li>
-                        }
+            <ul class="nav nav-pills nav-sidebar flex-column"
+                data-widget="treeview"
+                role="menu"
+                data-accordion="false">
 
-                    </ul>
+                <!-- Inicio -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="nav-icon bi bi-house-door-fill"></i>
+                        <p>Inicio</p>
+                    </a>
                 </li>
-             
+
+                <!-- Clientes -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-area="" asp-controller="Cliente" asp-action="Index">
+                        <i class="nav-icon bi bi-people-fill"></i>
+                        <p>Clientes</p>
+                    </a>
+                </li>
+
+                <!-- Usuarios -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                        <i class="nav-icon bi bi-person-badge-fill"></i>
+                        <p>Usuarios</p>
+                    </a>
+                </li>
+
+                <!-- Calendario -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="nav-icon bi bi-calendar-event"></i>
+                        <p>Calendario</p>
+                    </a>
+                </li>
+
+                <!-- Auditoría (solo Admin) -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Auditoria" asp-action="Index">
+                            <i class="nav-icon bi bi-shield-lock-fill"></i>
+                            <p>Ver Auditoría</p>
+                        </a>
+                    </li>
+                }
+
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
 </aside>

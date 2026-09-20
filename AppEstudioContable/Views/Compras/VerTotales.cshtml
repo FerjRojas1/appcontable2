@@ -1,106 +1,94 @@
 ﻿@model Dictionary<string, ServiciosEC.Utilidades.ModelosDTO.TotalesIVA>
-
 @{
-    ViewData["Title"] = "Totales Compras";
+    ViewData["Title"] = "Totales por Comprobante — Compras";
 }
 
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="text-dark">Totales de Compras</h1>
-            </div>
-        </div>
+<div class="text-center app-mt-4 app-mb-4">
+    <h2 class="app-title">
+        <i class="fas fa-file-invoice-dollar me-2"></i>
+        Totales por Tipo de Comprobante — Compras
+    </h2>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <!-- 🔴 ESTADO VACÍO -->
+    <div class="app-empty">
+        <i class="fas fa-inbox"></i>
+        <h4>No hay compras cargadas en el período</h4>
+        <p>
+            No se encontraron comprobantes para el CUIT <strong>@ViewBag.Cuit</strong>
+            @if (ViewBag.MesSeleccionado > 0)
+            {
+                <text> en el mes <strong>@ViewBag.MesSeleccionado</strong></text>
+            }
+            @if (ViewBag.AnoSeleccionado > 0)
+            {
+                <text> del año <strong>@ViewBag.AnoSeleccionado</strong></text>
+            }
+    .
+        </p>
+        <a asp-controller="Compras"
+           asp-action="Index"
+           asp-route-cuit="@ViewBag.Cuit"
+           class="app-btn app-btn--primary app-mt-4">
+            <i class="fas fa-arrow-left"></i> Volver a Compras
+        </a>
     </div>
-</section>
-
-<section class="content">
-    <div class="container-fluid">
-
-        @foreach (var item in Model)
-        {
-            <div class="card card-gray mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Factura Tipo: @item.Key</h3>
-                </div>
-
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover mb-0">
-                            <thead class="bg-light text-center">
-                                <tr>
-                                    <th>Neto Gravado</th>
-                                    <th>IVA 21%</th>
-                                    <th>IVA 10.5%</th>
-                                    <th>No Gravado</th>
-                                    <th>Exento</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="text-center">
-                                    <td>@item.Value.NetoGravado.ToString("C")</td>
-                                    <td>@item.Value.Iva21.ToString("C")</td>
-                                    <td>@item.Value.Iva105.ToString("C")</td>
-                                    <td>@item.Value.NoGravado.ToString("C")</td>
-                                    <td>@item.Value.Exento.ToString("C")</td>
-                                    <td>@item.Value.TotalGeneral.ToString("C")</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+}
+else
+{
+    <!-- ✅ CONTENIDO NORMAL -->
+    @foreach (var item in Model)
+    {
+        <div class="app-card app-mb-4">
+            <div class="app-card__header">
+                <h5 class="app-card__title">
+                    <i class="fas fa-file-invoice-dollar me-2"></i>
+                    Factura Tipo: <strong>@item.Key</strong>
+                </h5>
             </div>
-        }
-
-        @* Totales globales *@
-        @{
-            var totalNetoGravadoGlobal = Model.Sum(x => x.Value.NetoGravado);
-            var totalIva21Global = Model.Sum(x => x.Value.Iva21);
-            var totalIva105Global = Model.Sum(x => x.Value.Iva105);
-            var totalNoGravadoGlobal = Model.Sum(x => x.Value.NoGravado);
-            var totalExentoGlobal = Model.Sum(x => x.Value.Exento);
-            var totalGeneralGlobal = Model.Sum(x => x.Value.TotalGeneral);
-        }
-
-        <div class="card card-gray mb-5">
-            <div class="card-header">
-                <h3 class="card-title">Resumen Global de Compras</h3>
-            </div>
-            <div class="card-body p-0">
+            <div class="app-card__body p-0">
                 <div class="table-responsive">
-                    <table class="table table-bordered mb-0">
-                        <thead class="bg-light text-center">
+                    <table class="app-table app-table--striped">
+                        <thead>
                             <tr>
-                                <th>Neto Gravado (Global)</th>
+                                <th>Gravado 27%</th>
+                                <th>Gravado 21%</th>
+                                <th>Gravado 10.5%</th>
+                                <th>Exento</th>
+                                <th>No gravado</th>
+                                <th>IVA 27%</th>
                                 <th>IVA 21%</th>
                                 <th>IVA 10.5%</th>
-                                <th>No Gravado</th>
-                                <th>Exento</th>
-                                <th>Total General</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center bg-white">
-                                <td><strong>@totalNetoGravadoGlobal.ToString("C")</strong></td>
-                                <td><strong>@totalIva21Global.ToString("C")</strong></td>
-                                <td><strong>@totalIva105Global.ToString("C")</strong></td>
-                                <td><strong>@totalNoGravadoGlobal.ToString("C")</strong></td>
-                                <td><strong>@totalExentoGlobal.ToString("C")</strong></td>
-                                <td><strong>@totalGeneralGlobal.ToString("C")</strong></td>
+                            <tr>
+                                <td>@item.Value.Neto27.ToString("C")</td>
+                                <td>@item.Value.Neto21.ToString("C")</td>
+                                <td>@item.Value.Neto105.ToString("C")</td>
+                                <td>@item.Value.Exento.ToString("C")</td>
+                                <td>@item.Value.NoGravado.ToString("C")</td>
+                                <td>@item.Value.Iva27.ToString("C")</td>
+                                <td>@item.Value.Iva21.ToString("C")</td>
+                                <td>@item.Value.Iva105.ToString("C")</td>
+                                <td class="app-table__totals">@item.Value.TotalGeneral.ToString("C")</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+    }
 
+    <div class="app-mt-4">
+        <a asp-controller="Compras"
+           asp-action="Index"
+           asp-route-cuit="@ViewBag.Cuit"
+           class="app-btn app-btn--outline">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
     </div>
-</section>
-
-
-<div class="mt-4 ms-3">
-    <button type="button" onclick="window.history.back()" class="btn btn-outline-secondary btn-shine">
-        <i class="fas fa-arrow-left"></i> Volver
-    </button>
-</div>
+}

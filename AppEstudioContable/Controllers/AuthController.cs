@@ -109,5 +109,15 @@ namespace AppEstudioContable.Controllers
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet("/generar-hash/{password}")]
+        [AllowAnonymous]
+        public IActionResult GenerarHash(string password)
+        {
+            var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<ServiciosEC.Models.Usuario>();
+            var hash = hasher.HashPassword(new ServiciosEC.Models.Usuario(), password);
+            return Ok(new { password, hash });
+        }
     }
+
 }

@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System;
+using System.Globalization;
 
 namespace ServiciosEC.Utilidades
 {
@@ -51,24 +53,15 @@ namespace ServiciosEC.Utilidades
                         continue;
                     }
 
-                    var formatosDeFecha = new[]
-{
-                        "d/M/yyyy",
-                        "dd/M/yyyy",
-                        "d/MM/yyyy",
-                        "dd/MM/yyyy"
-                    };
+                    var fechaCell = reader.GetValue(0);
 
-                    string sFecha = reader.GetValue(0)?.ToString() ?? string.Empty;
-                    if (DateOnly.TryParseExact(sFecha, formatosDeFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out var fecha))
+                    if (!TryParseFechaCell(fechaCell, out var fecha))
                     {
-                        Debug.WriteLine($"Fecha válida: {fecha}");
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Formato inválido: valor default {fecha}");
+                        Debug.WriteLine($"❌ Fecha inválida en fila {contador}: '{fechaCell}' (tipo: {fechaCell?.GetType().Name ?? "null"})");
                         continue;
                     }
+
+                    Debug.WriteLine($"✅ Fecha parseada: {fecha}");
 
                     var compra = new Compra
                     {
@@ -140,26 +133,15 @@ namespace ServiciosEC.Utilidades
                         continue;
                     }
 
-                    var formatosDeFecha = new[]
-{
-                        "d/M/yyyy",
-                        "dd/M/yyyy",
-                        "d/MM/yyyy",
-                        "dd/MM/yyyy"
-                    };
+                    var fechaCell = reader.GetValue(0);
 
-                    
-
-                    string sFecha = reader.GetValue(0)?.ToString() ?? string.Empty;
-                    if (DateOnly.TryParseExact(sFecha, formatosDeFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out var fecha))
+                    if (!TryParseFechaCell(fechaCell, out var fecha))
                     {
-                        Debug.WriteLine($"Fecha válida: {fecha}");
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Formato inválido: valor default {fecha}");
+                        Debug.WriteLine($"❌ Fecha inválida en fila {contador}: '{fechaCell}' (tipo: {fechaCell?.GetType().Name ?? "null"})");
                         continue;
                     }
+
+                    Debug.WriteLine($"✅ Fecha parseada: {fecha}");
 
                     var venta = new Venta
                     {
@@ -193,6 +175,83 @@ namespace ServiciosEC.Utilidades
             return (results, primeraCelda);
         }
 
-        
+        /// <summary>
+        /// Intenta parsear el valor de una celda de Excel como fecha.
+        /// Soporta: DateTime, double (número de serie), string en múltiples formatos.
+        /// </summary>
+        private static bool TryParseFechaCell(object cellValue, out DateOnly fecha)
+        {
+            fecha = default;
+
+            // 1. Si ya viene como DateTime (Excel lo interpretó como fecha)
+            if (cellValue is DateTime dt)
+            {
+                fecha = DateOnly.FromDateTime(dt);
+                return true;
+            }
+
+            // 2. Si viene como número (número de serie de Excel)
+            if (cellValue is double d)
+            {
+                try
+                {
+                    fecha = DateOnly.FromDateTime(DateTime.FromOADate(d));
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            // 3. Si viene como string, intentar múltiples formatos
+            if (cellValue is string s && !string.IsNullOrWhiteSpace(s))
+            {
+                s = s.Trim();
+
+                // 3.1. Formatos explícitos (día/mes/año en distintos separadores)
+                var formatos = new[]
+                {
+            "d/M/yyyy",  "dd/M/yyyy",  "d/MM/yyyy",  "dd/MM/yyyy",
+            "d-M-yyyy",  "dd-M-yyyy",  "d-MM-yyyy",  "dd-MM-yyyy",
+            "yyyy-MM-dd", "yyyy/MM/dd",
+            "dd/MM/yy",  "d/M/yy",     "d/MM/yy",    "dd/M/yy",
+            "dd-MM-yy",  "d-M-yy"
+        };
+
+                if (DateOnly.TryParseExact(s, formatos,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out fecha))
+                {
+                    return true;
+                }
+
+                // 3.2. Intentar con cultura es-AR
+                if (DateOnly.TryParse(s, new CultureInfo("es-AR"), DateTimeStyles.None, out fecha))
+                {
+                    return true;
+                }
+
+                // 3.3. Intentar con cultura invariante
+                if (DateOnly.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecha))
+                {
+                    return true;
+                }
+
+                // 3.4. Si el string es un número, tratarlo como número de serie
+                if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var numero))
+                {
+                    try
+                    {
+                        fecha = DateOnly.FromDateTime(DateTime.FromOADate(numero));
+                        return true;
+                    }
+                    catch { }
+                }
+            }
+
+            return false;
+        }
+
     }
+
 }

@@ -1,162 +1,178 @@
 ﻿@model IEnumerable<ServiciosEC.Models.Compra>
 
+
+
 @{
     ViewData["Title"] = "Compras";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="card border-0 shadow-sm bg-light mb-4">
-    <div class="card-body text-center">
-        <h5 class="mb-0 text-dark">
-            <span class="text-muted">Cliente CUIT:</span> @ViewBag.Cuit
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+}
+
+<!-- Info del cliente -->
+<div class="app-card mb-4">
+    <div class="app-card__body text-center">
+        <h5 class="mb-0">
+            <span class="app-text-muted">Cliente:</span> @ViewBag.RazonSocial
         </h5>
     </div>
 </div>
 
+<!-- Filtros -->
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="app-card app-card--accent">
+            <div class="app-card__header">
+                <h5 class="app-card__title">
+                    <i class="fas fa-calendar-alt me-2"></i> Búsqueda por Período
+                </h5>
+            </div>
+            <div class="app-card__body">
+                <input type="hidden" id="clienteCuit" value="@ViewBag.Cuit" />
 
-<div class="content-wrapper">
-    <section class="content">
-        <div class="container-fluid mt-4">
-            <h2 class="text-center text-dark mb-4">Compras</h2>
-
-            <div class="row justify-content-center">
-                <div class="col-md-10">
-                    <div class="card shadow border-0 rounded-4 modern-card-alt">
-                        <div class="card-header bg-info bg-opacity-25 text-center rounded-top-4">
-                            <h5 class="mb-0 text-dark fw-semibold">📅 Búsqueda por Período</h5>
-                        </div>
-                        <div class="card-body bg-white">
-                            <input type="hidden" id="clienteCuit" value="@ViewBag.Cuit" />
-
-                            <div class="row mb-4 justify-content-center">
-                                <div class="col-md-4 col-sm-6">
-                                    <label for="mesInput" class="form-label">Mes (MM)</label>
-                                    <input type="text" id="mesInput" name="mes" class="form-control form-control-sm shadow-sm" placeholder="Ej: 01" value="@ViewBag.Mes">
-                                </div>
-                                <div class="col-md-4 col-sm-6">
-                                    <label for="anioInput" class="form-label">Año (AAAA)</label>
-                                    <input type="text" id="anioInput" name="anio" class="form-control form-control-sm shadow-sm" placeholder="Ej: 2023" value="@ViewBag.Anio">
-                                </div>
-                            </div>
-
-                            <hr class="mb-4 mt-0 border-gray" />
-
-                            <div class="row justify-content-center">
-                                <div class="col-md-4 col-sm-8 text-center d-grid gap-4">
-                                    <button type="button" id="filtrarListadoBtnCompras" class="btn btn-outline-info btn-lg rounded-pill">
-                                        <i class="fas fa-search me-2"></i> Buscar Compras
-                                    </button>
-                                    <button type="button" id="limpiarFiltrosBtnCompras" class="btn btn-outline-secondary btn-lg rounded-pill">
-                                        <i class="fas fa-eraser me-2"></i> Limpiar Filtros
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                <div class="row mb-4 justify-content-center">
+                    <div class="col-md-4 col-sm-6">
+                        <label for="mesInput" class="app-form-label">Mes (MM)</label>
+                        <input type="text" id="mesInput" name="mes"
+                               class="app-form-control"
+                               placeholder="Ej: 01" value="@ViewBag.Mes" />
                     </div>
+                    <div class="col-md-4 col-sm-6">
+                        <label for="anioInput" class="app-form-label">Año (AAAA)</label>
+                        <input type="text" id="anioInput" name="anio"
+                               class="app-form-control"
+                               placeholder="Ej: 2023" value="@ViewBag.Anio" />
+                    </div>
+                </div>
 
+                <hr class="mb-4 mt-0" />
+
+                <div class="row justify-content-center app-gap-2">
+                    <div class="col-md-6 col-lg-4">
+                        <button type="button" id="filtrarListadoBtnCompras"
+                                class="app-btn app-btn--outline app-btn--lg app-btn--block">
+                            <i class="fas fa-search"></i> Listado de Compras
+                        </button>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <button type="button" id="verTotalesComprobanteBtnCompras"
+                                class="app-btn app-btn--success app-btn--lg app-btn--block app-btn--shine">
+                            <i class="fas fa-file-invoice"></i> Totales por Comprobante
+                        </button>
+                    </div>
                 </div>
             </div>
-
         </div>
-    </section>
+    </div>
 </div>
 
-
+<!-- Tabla de compras -->
 @if (ViewBag.AnioSeleccionado > 0)
 {
-    @if (Model != null && Model.Any())
+    if (Model != null && Model.Any())
     {
-        <div class="container-fluid">
-            <div class="card shadow border-dark mb-6">
-                <div class="card-header bg-dark text-white">
-                    <strong>Facturas Cargadas</strong>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table id="tablaCompras" class="table table-bordered table-striped m-0">
-                            <thead class="table-dark">
+        <div class="app-card mt-4">
+            <div class="app-card__header">
+                <h5 class="app-card__title">Facturas Cargadas</h5>
+            </div>
+            <div class="app-card__body p-0">
+                <div class="table-responsive">
+                    <table id="tablaCompras" class="app-table app-table--striped app-table--dark">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo de Factura</th>
+                                <th>Punto de Venta</th>
+                                <th>Número Desde</th>
+                                <th>Número Documento Vendedor</th>
+                                <th>Denominación Vendedor</th>
+                                <th>Moneda</th>
+                                <th>Neto Gravado</th>
+                                <th>No Gravado</th>
+                                <th>Exento</th>
+                                <th>IVA</th>
+                                <th>Grav 10.5%</th>
+                                <th>Grav 21%</th>
+                                <th>Grav 27%</th>
+                                <th>IVA 10.5%</th>
+                                <th>IVA 21%</th>
+                                <th>IVA 27%</th>
+                                <th>Total</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
                                 <tr>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>P.Venta</th>
-                                    <th>Nro. Desde</th>                                   
-                                    <th>Nro. Doc. Vend.</th>
-                                    <th>Denom. Vendedor</th>                                    
-                                    <th>Moneda</th>
-                                    <th>Neto Gravado</th>
-                                    <th>No Gravado</th>
-                                    <th>Exento</th>
-                                    <th>IVA</th>
-                                    <th>Total</th>
-                                    <th class="text-center">Acciones</th>
+                                    <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.TipoFact</td>
+                                    <td>@item.PuntoVenta</td>
+                                    <td>@item.NroDesde</td>
+                                    <td>@item.NroDocVendedor</td>
+                                    <td>@item.DenomVendedor</td>
+                                    <td>@item.Moneda</td>
+                                    <td>@(item.NetoGravado?.ToString("N2") ?? "")</td>
+                                    <td>@(item.NoGravado?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Exento?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Iva?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Grav105?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Grav21?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Grav27?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Iva105?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Iva21?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Iva27?.ToString("N2") ?? "")</td>
+                                    <td>@(item.Total?.ToString("N2") ?? "")</td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-controller="Compras"
+                                               asp-route-id="@item.IdCompra" asp-route-cuit="@ViewBag.Cuit"
+                                               class="app-btn app-btn--warning app-btn--sm" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Details" asp-controller="Compras"
+                                               asp-route-id="@item.IdCompra" asp-route-cuit="@ViewBag.Cuit"
+                                               class="app-btn app-btn--outline app-btn--sm" title="Detalle">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-controller="Compras"
+                                               asp-route-id="@item.IdCompra" asp-route-cuit="@ViewBag.Cuit"
+                                               class="app-btn app-btn--danger app-btn--sm" title="Eliminar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@Html.DisplayFor(m => item.Fecha)</td>
-                                        <td>@Html.DisplayFor(m => item.TipoFact)</td>
-                                        <td>@Html.DisplayFor(m => item.PuntoVenta)</td>
-                                        <td>@Html.DisplayFor(m => item.NroDesde)</td>                                              
-                                        <td>@Html.DisplayFor(m => item.NroDocVendedor)</td>
-                                        <td>@Html.DisplayFor(m => item.DenomVendedor)</td>                                       
-                                        <td>@Html.DisplayFor(m => item.Moneda)</td>
-                                        <td>@Html.DisplayFor(m => item.NetoGravado)</td>
-                                        <td>@Html.DisplayFor(m => item.NoGravado)</td>
-                                        <td>@Html.DisplayFor(m => item.Exento)</td>
-                                        <td>@Html.DisplayFor(m => item.Iva)</td>
-                                        <td>@Html.DisplayFor(m => item.Total)</td>
-                                        <td class="text-center">
-                                            <div class="btn-group" role="group" aria-label="Acciones">
-                                                <a asp-action="Edit" asp-controller="Compras" asp-route-id="@item.IdCompra " asp-route-cuit="@ViewBag.Cuit" class="btn btn-sm btn-warning btn-shine" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a asp-action="Details" asp-controller="Compras" asp-route-id="@item.IdCompra " asp-route-cuit="@ViewBag.Cuit" class="btn btn-sm btn-info btn-shine" title="Detalle">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-controller="Compras" asp-route-id="@item.IdCompra " asp-route-cuit="@ViewBag.Cuit" class="btn btn-sm btn-danger btn-shine" title="Eliminar">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-
-    }else
-    {
-    <div class="alert alert-danger m-3 text-center">
-        No hay compras cargadas para el cliente con CUIT: <strong>@ViewBag.Cuit</strong>
-        @(ViewBag.MesSeleccionado > 0 ? $" en el mes {ViewBag.MesSeleccionado}" : "")
-        @(ViewBag.AnioSeleccionado > 0 ? $" del año {ViewBag.AnioSeleccionado}" : "").
-    </div>
     }
-    
+    else
+    {
+        <div class="app-alert app-alert--danger mt-4">
+            No hay compras cargadas para el cliente con CUIT: <strong>@ViewBag.Cuit</strong>
+            @(ViewBag.MesSeleccionado > 0 ? $" en el mes {ViewBag.MesSeleccionado}" : "")
+            @(ViewBag.AnioSeleccionado > 0 ? $" del año {ViewBag.AnoSeleccionado}" : "").
+        </div>
+    }
 }
 
-
-<div class="mt-4 ms-3">
+<!-- Botón Volver -->
+<div class="app-mt-4">
     <a asp-controller="Cliente"
        asp-action="Details"
        asp-route-id="@ViewBag.Id"
-       class="btn btn-outline-secondary btn-shine">
+       class="app-btn app-btn--outline">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
 </div>
 
+
 @section Scripts {
-    <script src="~/js/compras.js"></script>
-
-    <script>
-        let idTablaCompras = new DataTable('#tablaCompras');
-    </script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/compras.js" asp-append-version="true"></script>
 }
-
-
-

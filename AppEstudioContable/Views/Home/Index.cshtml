@@ -2,704 +2,105 @@
     ViewData["Title"] = "Inicio";
 }
 
-@section Styles {
-    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
-    @* <link rel="stylesheet" href="~/css/AdminLTE.min.css" /> *@
-    @* <link rel="stylesheet" href="~/css/skins/_all-skins.min.css" /> *@
-
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-
-
-
-    <style>
-
-        #calendar {
-            max-width: 900px;
-            margin: 0 auto;
-            min-height: 500px;
-        }
-
-        .external-event {
-            background-color: #0073b7;
-            color: #fff;
-            padding: 8px 10px;
-            margin-bottom: 5px;
-            cursor: grab;
-            border-radius: .25rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            font-size: 0.9rem;
-            text-align: center;
-            line-height: 1.2;
-            word-wrap: break-word;
-        }
-
-
-        #event-color-chooser > li > a {
-            display: inline-block;
-            padding: 5px;
-        }
-
-            #event-color-chooser > li > a.text-bold {
-                font-weight: bold;
-                border: 2px solid rgba(0,0,0,0.2);
-                border-radius: 50%;
-            }
-
-
-        .dia-seleccionado {
-            background: rgba(0, 123, 255, 0.2) !important;
-        }
-
-    </style>
-}
-
-
-
-
-<div class="container-fluid">
-    <div class="row">
-
-        <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-                <span class="info-box-icon text-bg-primary shadow-sm">
-                    <i class="bi bi-person-check-fill"></i>
-                </span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Clientes Activos</span>
-                    <span class="info-box-number" id="clientes-activos">@ViewBag.CantidadClientes</span>
-                </div>
-            </div>
-        </div>
-        @* <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-                <span class="info-box-icon text-bg-dark shadow-sm">
-                    <i class="bi bi-receipt-cutoff"></i>
-                </span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Comprobantes cargados</span>
-                    <span class="info-box-number">@ViewBag.CantidadComprobantes</span>
-                </div>
-            </div>
-        </div> *@
-        @* <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-                <span class="info-box-icon text-bg-success shadow-sm">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Ganancias (Mes)</span>
-                    <span class="info-box-number">@ViewBag.GananciasMes</span>
-                </div>
-            </div>
-        </div> *@
-        @* <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-                <span class="info-box-icon text-bg-info shadow-sm">
-                    <i class="bi bi-calendar-check"></i>
-                </span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Tareas para Hoy</span>
-                    <span class="info-box-number">@ViewBag.TareasHoy</span>
-                </div>
-            </div>
-        </div> *@
-
+<!-- Bienvenida -->
+<div class="app-card app-mb-4">
+    <div class="app-card__body text-center">
+        <h5 class="mb-0">
+            <i class="fas fa-home me-2"></i>
+            <span class="app-text-muted">Bienvenido,</span> @User.Identity?.Name
+        </h5>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-md-3">
-            <div class="sticky-top mb-3">
+<!-- Calendario -->
+<div class="app-card">
+    <div class="app-card__header">
+        <h5 class="app-card__title">
+            <i class="fas fa-calendar-alt me-2"></i> Agenda
+        </h5>
+        <button type="button" class="app-btn app-btn--primary app-btn--sm" id="btnNuevoEvento">
+            <i class="fas fa-plus"></i> Nuevo evento
+        </button>
+    </div>
+    <div class="app-card__body">
+        <div id="calendar"></div>
+    </div>
+</div>
 
-
-
-
-
-
-                <!-- <div class="card"> -->
-                <!--
-                <div class="card-header">
-                                <h4 class="card-title">Eventos Arrastrables</h4>
+<!-- ============================================ -->
+<!--  MODAL PARA CREAR / EDITAR EVENTO            -->
+<!-- ============================================ -->
+<div class="modal fade" id="modalEvento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content app-modal">
+            <form id="formEvento">
+                <div class="app-modal__header app-modal__header--info">
+                    <h5 class="app-modal__title" id="modalEventoTitulo">Nuevo evento</h5>
                 </div>
-                -->
-                <!--<div class="card-body"> -->
-                <!-- <div id="external-events"> -->
-                <!--      <div class="external-event bg-success ui-draggable ui-draggable-handle" style="position: relative;">Reunión Cliente</div>
-                <div class="external-event bg-warning ui-draggable ui-draggable-handle" style="position: relative;">Cierre Mensual</div>
-                <div class="external-event bg-info ui-draggable ui-draggable-handle" style="position: relative;">Preparar Impuestos</div>
-                <div class="external-event bg-primary ui-draggable ui-draggable-handle" style="position: relative;">Auditoría Interna</div>
-                <div class="external-event bg-danger ui-draggable ui-draggable-handle" style="position: relative;">Capacitación Personal</div>
 
-                <div class="checkbox">
-                    <label for="drop-remove">
-                        <input type="checkbox" id="drop-remove">
-                        Eliminar al arrastrar
-                    </label>
-                </div>
-                -->
-                <!-- </div> -->
-                <!-- </div> -->
-                <!-- </div> -->
+                <div class="app-modal__body">
+                    <input type="hidden" id="eventoId" name="Id" />
 
-
-
-
-
-
-
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Crear Evento</h3>
+                    <div class="app-form-group">
+                        <label for="eventoTitulo" class="app-form-label">Título</label>
+                        <input type="text" class="app-form-control" id="eventoTitulo" name="Titulo" required />
                     </div>
-                    <div class="card-body">
-                        <div class="input-group">
-                            <input id="new-event-title" type="text" class="form-control" placeholder="Título del Evento">
-                            <div class="input-group-append">
-                                <button id="add-new-event" type="button" class="btn btn-primary">Agregar</button>
-                            </div>
-                        </div>
-                        <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-                            <ul class="fc-color-picker" id="event-color-chooser">
-                                <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                                <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                                <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                                <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                                <li><a class="text-info" href="#"><i class="fas fa-square"></i></a></li>
-                                <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                            </ul>
+
+                    <div class="app-form-group">
+                        <label for="eventoDescripcion" class="app-form-label">Descripción</label>
+                        <textarea class="app-form-control app-form-control--textarea" id="eventoDescripcion" name="Descripcion"></textarea>
+                    </div>
+
+                    <div class="app-form-group">
+                        <label for="eventoFechaInicio" class="app-form-label">Fecha y hora de inicio</label>
+                        <input type="datetime-local" class="app-form-control" id="eventoFechaInicio" name="FechaInicio" required />
+                    </div>
+
+                    <div class="app-form-group">
+                        <label for="eventoFechaFin" class="app-form-label">Fecha y hora de fin</label>
+                        <input type="datetime-local" class="app-form-control" id="eventoFechaFin" name="FechaFin" />
+                    </div>
+
+                    <div class="app-form-group">
+                        <div class="app-check">
+                            <input class="app-check__input" type="checkbox" id="eventoTodoElDia" name="TodoElDia" value="true" />
+                            <label class="app-check__label" for="eventoTodoElDia">Todo el día</label>
                         </div>
                     </div>
+
+                    <div class="app-form-group">
+                        <label for="eventoColor" class="app-form-label">Color</label>
+                        <input type="color" class="app-form-control" id="eventoColor" name="Color" value="#1e40af" />
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-9">
-            <div class="card card-primary">
-                <div class="card-body p-0">
-                    <div id="calendar"></div>
+
+                <div class="app-modal__footer">
+                    <button type="button" class="app-btn app-btn--danger app-btn--sm d-none" id="btnEliminarEvento">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                    <button type="submit" class="app-btn app-btn--primary">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="app-btn app-btn--outline" data-dismiss="modal">
+                        Cancelar
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/adminlte/plugins/fullcalendar/main.min.css" asp-append-version="true" />
+}
+
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
-    <script>
-
-        $.widget.bridge('uibutton', $.ui.button);
-        $.widget.bridge('uitooltip', $.ui.tooltip);
-    </script>
-
-    <script>
-        $(function () {
-
-            function ini_events(ele) {
-                ele.each(function () {
-                    var eventObject = {
-                        title: $.trim($(this).text()),
-                        backgroundColor: $(this).css('background-color'),
-                        borderColor: $(this).css('border-color'),
-                        textColor: $(this).css('color'),
-                        allDay: true
-                    };
-                    $(this).data('eventObject', eventObject);
-
-                    $(this).draggable({
-                        zIndex: 1070,
-                        revert: true,
-                        revertDuration: 0
-                    });
-                });
-            }
-
-            ini_events($('#external-events div.external-event'));
-
-            // --- MANEJO DE SELECCIÓN DE COLOR PARA NUEVOS EVENTOS ---
-            var currColor = '#0073b7';
-            $('#event-color-chooser > li > a').click(function (e) {
-                e.preventDefault();
-                currColor = $(this).css('color');
-                $('#event-color-chooser > li > a').removeClass('text-bold');
-                $(this).addClass('text-bold');
-            });
-
-
-            $('#add-new-event').click(function (e) {
-                e.preventDefault();
-                var title = $('#new-event-title').val();
-                if (title.length == 0) {
-
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Título Requerido',
-                        text: 'El título del evento no puede estar vacío.',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return;
-                }
-
-                var newEventData = {
-                    Titulo: title,
-                    FechaInicio: moment(selectedDate).format('YYYY-MM-DDTHH:mm:ss'),
-                    TodoElDia: true,
-                    Color: currColor,
-                    Descripcion: ""
-                };
-
-                $.ajax({
-                    url: '/api/EventosAgenda',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(newEventData),
-                    success: function(response) {
-                        var event = $('<div />');
-                        event.css({
-                            'background-color': response.color,
-                            'border-color': response.color,
-                            'color': '#fff'
-                        }).addClass('external-event ui-draggable ui-draggable-handle');
-                        event.html(response.titulo);
-                        event.data('eventObject', {
-                            id: response.id,
-                            title: response.titulo,
-                            backgroundColor: response.color,
-                            borderColor: response.color,
-                            textColor: '#fff',
-                            allDay: response.todoElDia
-                        });
-                        $('#external-events').prepend(event);
-
-                        ini_events(event);
-
-                        $('#new-event-title').val('');
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'Evento guardado y añadido a arrastrables.',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                        calendar.refetchEvents();
-                    },
-                    error: function(xhr, status, error) {
-
-                        var errorMessage = xhr.responseText || 'Error desconocido al guardar el evento.';
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error al Guardar',
-                            text: errorMessage,
-                            confirmButtonText: 'Cerrar'
-                        });
-                        console.error('Error:', xhr.responseText);
-                    }
-                });
-            });
-
-
-            var calendarEl = document.getElementById('calendar');
-            var checkbox = document.getElementById('drop-remove');
-            var selectedDate = moment().format('YYYY-MM-DD'); 
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-
-                plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid'],
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                locale: 'es',
-                themeSystem: 'bootstrap',
-                buttonText: {
-                    today: 'Hoy',
-                    month: 'Mes',
-                    week: 'Semana',
-                    day: 'Día'
-                },
-                editable: true,
-                droppable: true,
-                selectable: true,
-
-            
-                selectAllow: function(selectInfo) {
-                    
-                    var today = FullCalendar.moment().startOf('day');
-
-                   
-                    var selectionStart = FullCalendar.moment(selectInfo.start).startOf('day');
-
-                   
-                    return !selectionStart.isBefore(today);
-                },
-
-
-                events: {
-                    url: '/api/EventosAgenda',
-                    method: 'GET',
-                    failure: function() {
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error de Carga',
-                            text: 'Hubo un error al cargar los eventos de la agenda.',
-                            confirmButtonText: 'Cerrar'
-                        });
-                    }
-                },
-
-                dateClick: function(info) {
-                    selectedDate = info.dateStr; // guardamos el día clickeado
-                    // marcar visualmente el día seleccionado
-                    $('.fc-day').removeClass('dia-seleccionado');
-                    $(info.dayEl).addClass('dia-seleccionado');
-                },
-
-
-                drop: function(info) {
-                    var originalEventObject = $(info.draggedEl).data('eventObject');
-
-                    var droppedEventData = {
-                        Titulo: originalEventObject.title,
-                        FechaInicio: info.date.toISOString(),
-                        TodoElDia: originalEventObject.allDay,
-                        Color: originalEventObject.backgroundColor,
-                        Descripcion: originalEventObject.description || ""
-                    };
-
-                    $.ajax({
-                        url: '/api/EventosAgenda',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(droppedEventData),
-                        success: function(response) {
-                            calendar.addEvent({
-                                id: response.id,
-                                title: response.titulo,
-                                start: response.fechaInicio,
-                                end: response.fechaFin,
-                                allDay: response.todoElDia,
-                                backgroundColor: response.color,
-                                borderColor: response.color,
-                                textColor: '#fff'
-                            });
-                            if (checkbox && checkbox.checked) {
-                                info.draggedEl.remove();
-                            }
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Evento Programado!',
-                                text: 'El evento ha sido añadido a tu calendario.',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        },
-                        error: function(xhr, status, error) {
-
-                            var errorMessage = xhr.responseText || 'Error desconocido al guardar el evento arrastrado.';
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error al Programar',
-                                text: errorMessage,
-                                confirmButtonText: 'Cerrar'
-                            });
-                            console.error('Error:', xhr.responseText);
-                        }
-                    });
-                },
-
-
-                select: function(info) {
-
-                    Swal.fire({
-                        title: 'Título del Evento:',
-                        input: 'text',
-                        inputPlaceholder: 'Ingresa el título aquí',
-                        showCancelButton: true,
-                        confirmButtonText: 'Crear Evento',
-                        cancelButtonText: 'Cancelar',
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return '¡Necesitas escribir algo!'
-                            }
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed && result.value) {
-                            var title = result.value;
-                            var newEventData = {
-                                Titulo: title,
-                                FechaInicio: info.startStr,
-                                FechaFin: info.endStr,
-                                TodoElDia: info.allDay,
-                                Color: currColor,
-                                Descripcion: ""
-                            };
-
-                            $.ajax({
-                                url: '/api/EventosAgenda',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify(newEventData),
-                                success: function(response) {
-                                    calendar.addEvent({
-                                        id: response.id,
-                                        title: response.titulo,
-                                        start: response.fechaInicio,
-                                        end: response.fechaFin,
-                                        allDay: response.todoElDia,
-                                        backgroundColor: response.color,
-                                        borderColor: response.color,
-                                        textColor: '#fff'
-                                    });
-                                    calendar.unselect();
-
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: '¡Evento Creado!',
-                                        text: `"${response.titulo}" ha sido creado en el calendario.`,
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    });
-                                },
-                                error: function(xhr, status, error) {
-
-                                    var errorMessage = xhr.responseText || 'Error desconocido al crear el evento.';
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error al Crear',
-                                        text: errorMessage,
-                                        confirmButtonText: 'Cerrar'
-                                    });
-                                    console.error('Error:', xhr.responseText);
-                                }
-                            });
-                        }
-                        calendar.unselect();
-                    });
-                },
-
-                eventDrop: function(info) {
-                       
-                    console.log("--- DEBUG: eventDrop ---");
-       
-                    var today = new Date();
-                    today.setHours(0, 0, 0, 0); 
-                    console.log("Fecha actual (today - JS Date): ", today.toISOString()); 
-
-        
-                    var newStartDate = new Date(info.event.start);
-                    newStartDate.setHours(0, 0, 0, 0); 
-                    console.log("Nueva fecha de inicio del evento (newStartDate - JS Date): ", newStartDate.toISOString());
-
-        
-                    var isBeforeToday = newStartDate < today;
-                    console.log("¿newStartDate es anterior a today?: ", isBeforeToday);
-                    console.log("--- FIN DE DEPURACIÓN ---");
-
-
-      
-                    if (isBeforeToday) { 
-                        info.revert(); 
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error al Mover!',
-                            text: 'No puedes mover un evento a una fecha anterior a hoy.',
-                            confirmButtonText: 'Entendido'
-                        });
-                        return; 
-                    }
-
-
-                    var eventId = info.event.id;
-                    var updatedEventData = {
-                        Id: eventId,
-                        Titulo: info.event.title,
-                        FechaInicio: info.event.start.toISOString(),
-                        FechaFin: info.event.end ? info.event.end.toISOString() : null,
-                        TodoElDia: info.event.allDay,
-                        Color: info.event.backgroundColor,
-                        Descripcion: info.event.extendedProps.description || ""
-                    };
-
-                    $.ajax({
-                        url: '/api/EventosAgenda/' + eventId,
-                        type: 'PUT',
-                        contentType: 'application/json',
-                        data: JSON.stringify(updatedEventData),
-                        success: function() {
-                            console.log('Evento actualizado (arrastre) con éxito.');
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Actualizado!',
-                                text: 'El evento ha sido movido.',
-                                showConfirmButton: false,
-                                timer: 1000
-                            });
-                        },
-                        error: function(xhr, status, error) {
-
-                            var errorMessage = xhr.responseText || 'Error desconocido al actualizar el evento.';
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error al Mover',
-                                text: errorMessage,
-                                confirmButtonText: 'Cerrar'
-                            });
-                            console.error('Error:', xhr.responseText);
-                            info.revert();
-                        }
-                    });
-                },
-
-                eventResize: function(info) {
-
-                        
-                    console.log("--- DEBUG: eventResize ---");
-                    var today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    console.log("Fecha actual (today - JS Date): ", today.toISOString());
-
-                    var newStartDate = new Date(info.event.start);
-                    newStartDate.setHours(0, 0, 0, 0);
-                    console.log("Nueva fecha de inicio del evento (newStartDate - JS Date): ", newStartDate.toISOString());
-
-                    var newEndDate = info.event.end ? new Date(info.event.end) : null;
-                    if (newEndDate) {
-                        newEndDate.setHours(0, 0, 0, 0);
-                        console.log("Nueva fecha de fin del evento (newEndDate - JS Date): ", newEndDate.toISOString());
-                    }
-
-                    var isStartDateBeforeToday = newStartDate < today;
-                    console.log("¿newStartDate es anterior a today?: ", isStartDateBeforeToday);
-
-                    var isEndDateBeforeToday = false;
-                    if (newEndDate) {
-                        isEndDateBeforeToday = newEndDate < today;
-                        console.log("¿newEndDate es anterior a today?: ", isEndDateBeforeToday);
-                    }
-                    console.log("--- FIN DE DEPURACIÓN ---");
-
-
-      
-                    if (isStartDateBeforeToday) {
-                        info.revert();
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error al Redimensionar!',
-                            text: 'No puedes redimensionar un evento para que comience en una fecha anterior a hoy.',
-                            confirmButtonText: 'Entendido'
-                        });
-                        return;
-                    }
-
-        
-                    if (newEndDate && isEndDateBeforeToday) {
-                        info.revert();
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error al Redimensionar!',
-                            text: 'La fecha de finalización no puede ser anterior a hoy.',
-                            confirmButtonText: 'Entendido'
-                        });
-                        return;
-                    }
-
-
-                    var eventId = info.event.id;
-                    var updatedEventData = {
-                        Id: eventId,
-                        Titulo: info.event.title,
-                        FechaInicio: info.event.start.toISOString(),
-                        FechaFin: info.event.end ? info.event.end.toISOString() : null,
-                        TodoElDia: info.event.allDay,
-                        Color: info.event.backgroundColor,
-                        Descripcion: info.event.extendedProps.description || ""
-                    };
-
-                    $.ajax({
-                        url: '/api/EventosAgenda/' + eventId,
-                        type: 'PUT',
-                        contentType: 'application/json',
-                        data: JSON.stringify(updatedEventData),
-                        success: function() {
-                            console.log('Evento actualizado (redimensionar) con éxito.');
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Actualizado!',
-                                text: 'El evento ha sido redimensionado.',
-                                showConfirmButton: false,
-                                timer: 1000
-                            });
-                        },
-                        error: function(xhr, status, error) {
-
-                            var errorMessage = xhr.responseText || 'Error desconocido al actualizar el evento.';
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error al Redimensionar',
-                                text: errorMessage,
-                                confirmButtonText: 'Cerrar'
-                            });
-                            console.error('Error:', xhr.responseText);
-                            info.revert();
-                        }
-                    });
-                },
-
-                eventClick: function(info) {
-
-                    Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: `¿Quieres eliminar el evento "${info.event.title}"?`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            var eventId = info.event.id;
-                            $.ajax({
-                                url: '/api/EventosAgenda/' + eventId,
-                                type: 'DELETE',
-                                success: function() {
-                                    info.event.remove();
-
-                                    Swal.fire(
-                                        '¡Eliminado!',
-                                        'El evento ha sido eliminado.',
-                                        'success'
-                                    );
-                                    console.log('Evento eliminado con éxito.');
-                                },
-                                error: function(xhr, status, error) {
-
-                                    var errorMessage = xhr.responseText || 'Error desconocido al eliminar el evento.';
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error al Eliminar',
-                                        text: errorMessage,
-                                        confirmButtonText: 'Cerrar'
-                                    });
-                                    console.error('Error:', xhr.responseText);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-
-            calendar.render();
-        });
-    </script>
+    <script src="~/adminlte/plugins/moment/moment.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/fullcalendar/main.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/fullcalendar-daygrid/main.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/fullcalendar-timegrid/main.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/fullcalendar-interaction/main.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/fullcalendar-bootstrap/main.min.js" asp-append-version="true"></script>
+    <script src="~/adminlte/plugins/fullcalendar/locales/es.js" asp-append-version="true"></script>
+    <script src="~/js/calendario.js" asp-append-version="true"></script>
 }

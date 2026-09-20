@@ -39,8 +39,7 @@
                 <div class="table-responsive">
                     <table id="tablaClientes" class="table table-bordered table-hover text-nowrap">
                         <thead class="thead-light">
-                            <tr>
-                                <th>Id</th>
+                            <tr>                                
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Cuit</th>
@@ -53,17 +52,17 @@
                              @foreach (var item in Model) 
                              {
                                 <tr>
-                                    <td>@item.IdPersona</td>
                                     <td>@item.Nombre</td>
                                     <td>@item.Apellido</td>
                                     <td>@item.Cuit</td>
                                     <td>@item.DomFiscal</td>
                                     <td>@item.RazonSocial</td>
                                     <td class="text-center">
+
                                         <div class="btn-group">
                                             
                                             <a asp-action="Details" asp-route-id="@item.IdPersona" class="btn btn-info btn-sm btn-shine">
-                                                <i class="fas fa-info-circle"></i>
+                                                <i class="fas fa-info-circle"> Ver Cliente</i>
                                             </a>
                                             
                                         </div>
@@ -80,7 +79,7 @@
 
 @section Scripts {
     <script>
-        let idtablaClientes = new DataTable('#tablaClientes');
+        crearDataTable('#tablaClientes', 'clientes');
     </script>
 }
 

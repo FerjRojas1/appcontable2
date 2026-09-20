@@ -1,6 +1,6 @@
 ﻿@{
     Layout = null;
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Iniciar Sesión";
 }
 
 <!DOCTYPE html>
@@ -8,62 +8,76 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Iniciar Sesión</title>
+    <title>Iniciar Sesión - AppContable</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="~/adminlte/plugins/fontawesome-free/css/all.min.css" />
-    <!-- AdminLTE -->
     <link rel="stylesheet" href="~/adminlte/dist/css/adminlte.min.css" />
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/css/design-system.css" />
+    <link rel="stylesheet" href="~/css/login.css" /> 
 </head>
 
-<body class="hold-transition login-page">
-    <div class="login-box">
-        <!-- Logo o encabezado -->
-        <div class="login-logo">
-            <b>App</b>Contable
+<body class="login-page">
+
+    <!-- Overlay oscuro para legibilidad sobre la imagen -->
+    <div class="login-overlay"></div>
+
+    <div class="login-container">
+        <div class="login-card">
+
+            <div class="login-brand">
+                <span>App</span>Contable
+            </div>
+
+            <div class="login-header">
+                <h1>Bienvenido</h1>
+                <p>Ingresá a tu espacio de trabajo</p>
+            </div>
+
+            <form asp-controller="Auth" asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="app-form-group">
+                    <label for="Email" class="app-form-label">Usuario o email</label>
+                    <div class="app-input-icon">
+                        <i class="fas fa-user"></i>
+                        <input id="Email"
+                               name="Email"
+                               class="app-form-control"
+                               placeholder="Ingresá tu usuario o email"
+                               autocomplete="username" />
+                    </div>
+                </div>
+
+                <div class="app-form-group">
+                    <label for="Contrasenia" class="app-form-label">Contraseña</label>
+                    <div class="app-input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input id="Contrasenia"
+                               name="Contrasenia"
+                               type="password"
+                               class="app-form-control"
+                               placeholder="Ingresá tu contraseña"
+                               autocomplete="current-password" />
+                    </div>
+                </div>
+
+                <button type="submit" class="login-button">
+                    Ingresar
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                @Html.ValidationSummary(true, "", new { @class = "app-alert app-alert--danger mt-3" })
+            </form>
+
         </div>
 
-        <!-- Login card -->
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Iniciar sesión</p>
-
-                <form asp-controller="Auth" asp-action="Login" method="post">
-                    @Html.AntiForgeryToken()
-
-                    <div class="input-group mb-3">
-                        <input name="Email" class="form-control" placeholder="Usuario o email" />
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-user"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <input name="Contrasenia" type="password" class="form-control" placeholder="Contraseña" />
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-info btn-block btn-shine">Ingresar</button>
-                        </div>
-                    </div>
-
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger mt-2" })
-                </form>
-            </div>
+        <div class="login-footer">
+            © @DateTime.Now.Year AppContable
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
     <script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/adminlte/dist/js/adminlte.min.js"></script>
