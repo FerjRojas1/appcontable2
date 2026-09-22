@@ -33,6 +33,7 @@ function crearDataTable(selector, entidad = "registros", opciones = {}) {
         infoFiltered: `(filtrado de _MAX_ ${entidad})`,
         zeroRecords: `No se encontraron ${entidad}`,
         emptyTable: `No hay ${entidad} para mostrar`
+
     };
 
     return new DataTable(selector, {

@@ -101,8 +101,8 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 //  Aplicar migraciones automáticamente al arrancar
-if (!app.Environment.IsDevelopment())
-{
+//if (!app.Environment.IsDevelopment())
+
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<ECContext>();
@@ -119,12 +119,12 @@ if (!app.Environment.IsDevelopment())
             throw;
         }
     }
-}
-else
-{
-    // En desarrollo, solo logueamos
-    Console.WriteLine("Entorno de desarrollo: omitiendo migraciones automáticas.");
-}
+
+//else
+//{
+//    // En desarrollo, solo logueamos
+//    Console.WriteLine("Entorno de desarrollo: omitiendo migraciones automáticas.");
+//}
 
 
 // Configure the HTTP request pipeline.

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServiciosEC.Models;
 
@@ -11,9 +12,11 @@ using ServiciosEC.Models;
 namespace ServiciosEC.Migrations
 {
     [DbContext(typeof(ECContext))]
-    partial class ECContextModelSnapshot : ModelSnapshot
+    [Migration("20260922143723_AddDiscriminator")]
+    partial class AddDiscriminator
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

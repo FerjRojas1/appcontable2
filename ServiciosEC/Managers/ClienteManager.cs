@@ -45,6 +45,9 @@ namespace ServiciosEC.Managers
         {
             
             _context.Clientes.Add(cliente);
+
+            _context.Entry(cliente).Property("Discriminator").CurrentValue = "Cliente";
+
             await _context.SaveChangesAsync(cancellationToken);
         }
 

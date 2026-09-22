@@ -660,6 +660,14 @@ public partial class ECContext : DbContext
                 .HasConstraintName("FK__Ventas__id_perso__3B75D760");
         });
 
+        modelBuilder.Entity<Cliente>();
+        modelBuilder.Entity<Usuario>();
+
+        modelBuilder.Entity<Persona>()
+            .HasDiscriminator<string>("Discriminator")
+            .HasValue<Cliente>("Cliente")
+            .HasValue<Usuario>("Usuario");
+
         OnModelCreatingPartial(modelBuilder);
     }
 

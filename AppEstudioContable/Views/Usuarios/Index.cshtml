@@ -44,21 +44,6 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
-@* 
-                <div class="row mb-3">
-                    
-                    <div class="col-md-6 offset-md-3">
-                        
-                        <div class="input-group">
-                            <input type="text" name="filtro" id="buscarUsuario" class="form-control" placeholder="Buscar usuario por nombre, email o DNI..." aria-label="Buscar usuario"> 
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="btnBuscar">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div> *@
 
                 <div class="table-responsive">
                     <table id="usuariosTable" class="table table-hover table-bordered align-middle dataTable no-footer" role="grid">
@@ -115,17 +100,16 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script src="~/js/BuscarUsuario.js"></script>
-    <script>
-        let usuariosTable = new DataTable('#usuariosTable');
-    </script>
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.min.css" />
-    <script type="text/javascript" src="https://cdn.datatables.net/2.0.0/js/dataTables.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
-            
+        $(function () {
+            $('#usuariosTable').DataTable({
+                language: { url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" },
+                pageLength: 10,
+                order: [[0, 'asc']]
+            });
         });
     </script>
 }

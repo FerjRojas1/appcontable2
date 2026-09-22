@@ -137,8 +137,12 @@ namespace ServiciosEC.Managers
             }
             else
             {
+                // Usuario nuevo: agregar y forzar discriminador
                 _context.Usuarios.Add(usuario);
+                _context.Entry(usuario).Property("Discriminator").CurrentValue = "Usuario";
             }
+
+            
 
             await _context.SaveChangesAsync(cancellationToken);
         }
