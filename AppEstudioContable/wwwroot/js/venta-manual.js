@@ -86,6 +86,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function () {
+            // 👇 Convertir currency-input a formato plano antes de enviar
+            form.querySelectorAll('input.currency-input').forEach(function (input) {
+                if (window.CurrencyHelper) {
+                    const raw = window.CurrencyHelper.parse(input.value);
+                    // Formato plano con punto decimal, sin separador de miles
+                    input.value = raw.toString();
+                }
+            });
+
             const nroDesde = document.getElementById('NroDesde')?.value;
             const nroHasta = document.getElementById('NroHasta');
             if (nroHasta && !nroHasta.value && nroDesde) {

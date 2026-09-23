@@ -88,11 +88,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function () {
+            // 1. Convertir currency-input a formato plano
+            form.querySelectorAll('input.currency-input').forEach(function (input) {
+                if (window.CurrencyHelper) {
+                    const raw = window.CurrencyHelper.parse(input.value);
+                    input.value = raw.toString();
+                }
+            });
+
+            // 2. NroHasta por defecto = NroDesde
             const nroDesde = document.getElementById('NroDesde')?.value;
             const nroHasta = document.getElementById('NroHasta');
             if (nroHasta && !nroHasta.value && nroDesde) {
                 nroHasta.value = nroDesde;
             }
+
+            // 3. Rellenar inputs numéricos vacíos con 0
             form.querySelectorAll('input[type="number"]').forEach(input => {
                 if (input.value === '') input.value = 0;
             });

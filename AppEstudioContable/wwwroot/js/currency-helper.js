@@ -10,19 +10,28 @@
         str = String(str).trim();
         if (str === '') return 0;
 
-        // Sacar todo excepto dígitos, coma y punto
+        // Sacar todo excepto dígitos, coma, punto y signo
         str = str.replace(/[^\d,.-]/g, '');
 
-        // Si hay coma Y punto: el punto es separador de miles, la coma decimal
-        if (str.includes(',') && str.includes('.')) {
+        const tieneComa = str.includes(',');
+        const tienePunto = str.includes('.');
+
+        if (tieneComa && tienePunto) {
+            // Formato es-AR: 1.234,56 → el punto es miles, la coma decimal
             str = str.replace(/\./g, '').replace(',', '.');
-        }
-        // Si hay solo coma: es decimal
-        else if (str.includes(',')) {
+        } else if (tieneComa) {
+            // Solo coma: 1234,56 → decimal
             str = str.replace(',', '.');
+        } else if (tienePunto) {
+            // Solo punto: decidir si es miles o decimal
+            const partes = str.split('.');
+            const ultima = partes[partes.length - 1];
+            // Múltiples puntos O último grupo de exactamente 3 dígitos → miles
+            if (partes.length > 2 || ultima.length === 3) {
+                str = str.replace(/\./g, '');
+            }
+            // Si no, se deja el punto como decimal (ej: "1.5" → 1.5)
         }
-        // Si hay solo punto: puede ser decimal o miles. Asumimos decimal.
-        // (para valores chicos como 1.234 podría ser miles, pero priorizamos decimal)
 
         const num = parseFloat(str);
         return isNaN(num) ? 0 : num;
