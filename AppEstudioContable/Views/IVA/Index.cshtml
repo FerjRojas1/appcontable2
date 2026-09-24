@@ -1,7 +1,12 @@
 ﻿@model List<AppEstudioContable.Models.PeriodosModel>
+
+
 @{
     ViewBag.Title = "IVA";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var graficoIva = ViewBag.GraficoIva as List<AppEstudioContable.Models.DTO.IvaGraficoAnualDto>
+                     ?? new List<AppEstudioContable.Models.DTO.IvaGraficoAnualDto>();
 }
 <div class="card border-0 shadow-sm bg-light mb-4">
     <div class="card-body text-center">
@@ -50,7 +55,45 @@
     </div>
 </section>
 
-<section class="content">
+<!-- ===================== Gráfico IVA Anual ===================== -->
+
+@if (graficoIva.Any())
+{
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row justify-content-center mt-4">
+                <div class="col-12 col-lg-10">
+                    <div class="card border-0 shadow-sm rounded" style="background-color: #f8f9fa;">
+                        <div class="card-header bg-white border-bottom-0">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <div>
+                                    <h5 class="mb-0 text-secondary">
+                                        <i class="fas fa-chart-bar me-2"></i> Totales Netos por Año
+                                    </h5>
+                                    <small class="text-muted">Crédito Fiscal vs Débito Fiscal</small>
+                                </div>
+                                <div class="form-inline mt-2 mt-md-0">
+                                    <label for="anioGrafico" class="mr-2 mb-0 text-muted small">Año:</label>
+                                    <select id="anioGrafico" class="form-control form-control-sm">
+                                        @foreach (var d in graficoIva)
+                                        {
+                                            <option value="@d.Anio">@d.Anio</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="graficoIvaAnual" height="110"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@* <section class="content">
     <div class="container-fluid">
         <div class="row justify-content-center mt-4">
 
@@ -108,7 +151,7 @@
 
         </div>
     </div>
-</section>
+</section> *@
 
 
 <div class="mt-4 ms-3">
@@ -255,6 +298,7 @@
 
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -338,6 +382,89 @@
                 return fecha.toLocaleDateString('es-AR');
             }
 
-        });
+                // ===================== Gráfico IVA Anual =====================
+        const datosGrafico = @Html.Raw(Json.Serialize(ViewBag.GraficoIva ?? new List<object>()));
+        let chartIva = null;
+
+        function renderGrafico(anio) {
+            const dato = datosGrafico.find(d => d.anio === parseInt(anio));
+            if (!dato) return;
+
+            const canvas = document.getElementById('graficoIvaAnual');
+            if (!canvas) return;
+
+            // Destruir gráfico previo para evitar duplicados
+            if (chartIva) {
+                chartIva.destroy();
+            }
+
+            chartIva = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: ['Totales Netos'],
+                    datasets: [
+                        {
+                            label: 'Crédito Fiscal (Neto)',
+                            data: [dato.totalCreditoNeto],
+                            backgroundColor: '#0891b2',
+                            borderColor: '#0e7490',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Débito Fiscal (Neto)',
+                            data: [dato.totalDebitoNeto],
+                            backgroundColor: '#64748b',
+                            borderColor: '#475569',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',   // 👈 BARRAS HORIZONTALES
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const valor = context.parsed.x || 0;
+                                    return context.dataset.label + ': ' +
+                                        valor.toLocaleString('es-AR', {
+                                            style: 'currency',
+                                            currency: 'ARS'
+                                        });
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('es-AR', {
+                                        style: 'currency',
+                                        currency: 'ARS',
+                                        maximumFractionDigits: 0
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render inicial + listener del dropdown
+        const selectorAnio = document.getElementById('anioGrafico');
+        if (selectorAnio && datosGrafico.length > 0) {
+            renderGrafico(selectorAnio.value);
+
+            selectorAnio.addEventListener('change', function () {
+                renderGrafico(this.value);
+            });
+        }
+        }
     </script>
 }

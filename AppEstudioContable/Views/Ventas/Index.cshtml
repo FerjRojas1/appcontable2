@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<ServiciosEC.Models.Venta>
 
-
-
 @{
     ViewData["Title"] = "Ventas";
 }
@@ -22,10 +20,10 @@
 <!-- Filtros -->
 <div class="row justify-content-center">
     <div class="col-md-10">
-        <div class="app-card">
+        <div class="app-card app-card--ventas">
             <div class="app-card__header">
                 <h5 class="app-card__title">
-                    <i class="fas fa-calendar-alt me-2"></i> Búsqueda por Período
+                    <i class="fas fa-calendar-alt me-2"></i> Búsqueda de Ventas por Período
                 </h5>
             </div>
             <div class="app-card__body">
@@ -49,13 +47,13 @@
                 <div class="row justify-content-center app-gap-2">
                     <div class="col-md-6 col-lg-4">
                         <button type="button" id="filtrarListadoBtn"
-                                class="app-btn app-btn--outline app-btn--lg app-btn--block">
+                                class="app-btn app-btn--ventas app-btn--outline app-btn--lg app-btn--block">
                             <i class="fas fa-search"></i> Listado de Ventas
                         </button>
                     </div>
                     <div class="col-md-6 col-lg-4">
                         <button type="button" id="verTotalesComprobanteBtn"
-                                class="app-btn app-btn--success app-btn--lg app-btn--block app-btn--shine">
+                                class="app-btn app-btn--ventas app-btn--lg app-btn--block app-btn--shine">
                             <i class="fas fa-file-invoice"></i> Totales por Comprobante
                         </button>
                     </div>
@@ -72,13 +70,13 @@
 <!-- Tabla de ventas -->
 @if (ViewBag.AnoSeleccionado > 0)
 {
-    <div class="app-card mt-4">
+    <div class="app-card app-card--ventas mt-4">
         <div class="app-card__header">
             <h5 class="app-card__title">Facturas Cargadas</h5>
         </div>
         <div class="app-card__body p-0">
             <div class="table-responsive">
-                <table id="tablaVentas" class="app-table app-table--striped">
+                <table id="tablaVentas" class="app-table app-table--striped app-table--ventas">
                     <thead>
                         <tr>
                             <th>Fecha</th>
@@ -88,11 +86,11 @@
                             <th>Número Documento Comprador</th>
                             <th>Denominación Comprador</th>
                             <th>Grav 27%</th>
-                            <th>Grav 21%</th>                         
+                            <th>Grav 21%</th>
                             <th>Grav 10.5%</th>
                             <th>No Gravado</th>
                             <th>Exento</th>
-                            <th>IVA 27%</th>                            
+                            <th>IVA 27%</th>
                             <th>IVA 21%</th>
                             <th>IVA 10.5%</th>
                             <th>Total</th>
@@ -111,12 +109,12 @@
                                     <td>@Html.DisplayFor(m => item.NroDesde)</td>
                                     <td>@Html.DisplayFor(m => item.NroDocComprador)</td>
                                     <td>@Html.DisplayFor(m => item.DenomComprador)</td>
-                                    <td>@Html.DisplayFor(m => item.Grav27)</td>                                  
+                                    <td>@Html.DisplayFor(m => item.Grav27)</td>
                                     <td>@Html.DisplayFor(m => item.Grav21)</td>
                                     <td>@Html.DisplayFor(m => item.Grav105)</td>
                                     <td>@Html.DisplayFor(m => item.NoGravado)</td>
                                     <td>@Html.DisplayFor(m => item.Exento)</td>
-                                    <td>@Html.DisplayFor(m => item.Iva27)</td>                                   
+                                    <td>@Html.DisplayFor(m => item.Iva27)</td>
                                     <td>@Html.DisplayFor(m => item.Iva21)</td>
                                     <td>@Html.DisplayFor(m => item.Iva105)</td>
                                     <td>@Html.DisplayFor(m => item.Total)</td>

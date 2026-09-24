@@ -1,7 +1,5 @@
 ﻿@model AppEstudioContable.Models.VentaViewModel
 
-
-
 @{
     ViewData["Title"] = "Gestión de Ventas";
 }
@@ -11,7 +9,7 @@
 }
 
 <!-- Info del cliente -->
-<div class="app-card mb-4">
+<div class="app-card app-card--ventas mb-4">
     <div class="app-card__body text-center">
         <h5 class="mb-0">
             <span class="app-text-muted">Cliente:</span> @ViewBag.RazonSocial
@@ -24,7 +22,7 @@
 <div class="row">
     <!-- Importar desde Excel -->
     <div class="col-md-6">
-        <div class="app-card h-100">
+        <div class="app-card app-card--ventas h-100">
             <div class="app-card__header">
                 <h5 class="app-card__title">
                     <i class="fas fa-file-excel me-2"></i> Importar Ventas desde Excel
@@ -49,7 +47,7 @@
                         <div class="app-file">
                             <input type="file" name="file" id="file"
                                    accept=".xlsx,.xls,.csv"
-                                   class="app-form-control" required />
+                                   class="app-file__input" required />
                             <label class="app-file__label" for="file">
                                 <i class="fas fa-cloud-upload-alt me-2"></i>
                                 <span class="app-file__text">Elegir archivo</span>
@@ -67,7 +65,7 @@
                     @Html.ValidationSummary(true, "", new { @class = "app-alert app-alert--danger mt-3" })
 
                     <button type="submit" id="btnCargar"
-                            class="app-btn app-btn--primary app-btn--lg app-btn--block app-btn--shine app-mt-4">
+                            class="app-btn app-btn--ventas app-btn--lg app-btn--block app-btn--shine app-mt-4">
                         <i class="fas fa-upload me-2"></i> Cargar Ventas
                     </button>
 
@@ -95,22 +93,24 @@
 
     <!-- Carga manual -->
     <div class="col-md-6">
-        <div class="app-card h-100">
+        <div class="app-card app-card--ventas h-100">
             <div class="app-card__header">
                 <h5 class="app-card__title">
                     <i class="fas fa-plus-circle me-2"></i> Cargar Venta Manual
                 </h5>
             </div>
-            <div class="app-card__body app-flex-between" style="flex-direction: column;">
-                <p class="app-text-muted app-mb-4">
-                    Ingresá una nueva venta manualmente, completando todos los detalles.
-                </p>
-                <form asp-controller="Ventas" asp-action="Create" method="get" class="w-100">
-                    <input type="hidden" name="id" value="@Model.id" />
-                    <button type="submit" class="app-btn app-btn--info app-btn--lg app-btn--block app-btn--shine">
-                        <i class="fas fa-pencil-alt me-2"></i> Nueva Venta
-                    </button>
-                </form>
+            <div class="app-card__body app-flex-center" style="min-height: 200px;">
+                <div class="text-center">
+                    <p class="app-text-muted app-mb-4">
+                        Ingresá una nueva venta manualmente, completando todos los detalles.
+                    </p>
+                    <form asp-controller="Ventas" asp-action="Create" method="get">
+                        <input type="hidden" name="id" value="@Model.id" />
+                        <button type="submit" class="app-btn app-btn--ventas app-btn--lg app-btn--shine">
+                            <i class="fas fa-pencil-alt me-2"></i> Agregar Nueva Venta
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -181,7 +181,7 @@
                                                             <i class="fas fa-pencil-alt me-2"></i>
                                                             Editar Venta #@item.IdVenta
                                                         </h5>
-                                                    </div>                                                   
+                                                    </div>
 
                                                     <div class="app-modal__body">
                                                         <!-- Datos principales -->
@@ -302,19 +302,19 @@
                                                                 @{
                                                                     var campos = new[]
                                                                     {
-                                                                                                                ("Iva0", "IVA 0%", item.Iva0),
-                                                                                                                ("Iva5", "IVA 5%", item.Iva5),
-                                                                                                                ("Iva105", "IVA 10.5%", item.Iva105),
-                                                                                                                ("Iva21", "IVA 21%", item.Iva21),
-                                                                                                                ("Iva25", "IVA 2.5%", item.Iva25),
-                                                                                                                ("Iva27", "IVA 27%", item.Iva27),
-                                                                                                                ("Grav0", "Gravado 0%", item.Grav0),
-                                                                                                                ("Grav5", "Gravado 5%", item.Grav5),
-                                                                                                                ("Grav105", "Gravado 10.5%", item.Grav105),
-                                                                                                                ("Grav21", "Gravado 21%", item.Grav21),
-                                                                                                                ("Grav25", "Gravado 2.5%", item.Grav25),
-                                                                                                                ("Grav27", "Gravado 27%", item.Grav27)
-                                                                                                                };
+                                                                        ("Iva0", "IVA 0%", item.Iva0),
+                                                                        ("Iva5", "IVA 5%", item.Iva5),
+                                                                        ("Iva105", "IVA 10.5%", item.Iva105),
+                                                                        ("Iva21", "IVA 21%", item.Iva21),
+                                                                        ("Iva25", "IVA 2.5%", item.Iva25),
+                                                                        ("Iva27", "IVA 27%", item.Iva27),
+                                                                        ("Grav0", "Gravado 0%", item.Grav0),
+                                                                        ("Grav5", "Gravado 5%", item.Grav5),
+                                                                        ("Grav105", "Gravado 10.5%", item.Grav105),
+                                                                        ("Grav21", "Gravado 21%", item.Grav21),
+                                                                        ("Grav25", "Gravado 2.5%", item.Grav25),
+                                                                        ("Grav27", "Gravado 27%", item.Grav27)
+                                                                    };
                                                                 }
                                                                 @foreach (var (nombre, label, valor) in campos)
                                                                 {
@@ -442,19 +442,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.ventasParaRevisar)
+                        @foreach (var item in Model.ventasFallidas)
                         {
-                        <td>@item.Fecha</td>
-                        <td>@item.TipoFact</td>
-                        <td>@item.PuntoVenta</td>
-                        <td>@item.NroDesde</td>
-                        <td>@item.NroDocComprador</td>
-                        <td>@item.DenomComprador</td>
-                        <td>@item.Moneda</td>
-                        <td>@item.NetoGravado</td>
-                        <td>@item.Iva</td>
-                        <td>@item.Total</td>
-                    }
+                            <tr>
+                                <td>@item.Fecha</td>
+                                <td>@item.TipoFact</td>
+                                <td>@item.PuntoVenta</td>
+                                <td>@item.NroDesde</td>
+                                <td>@item.NroDocComprador</td>
+                                <td>@item.DenomComprador</td>
+                                <td>@item.Moneda</td>
+                                <td>@item.NetoGravado</td>
+                                <td>@item.Iva</td>
+                                <td>@item.Total</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

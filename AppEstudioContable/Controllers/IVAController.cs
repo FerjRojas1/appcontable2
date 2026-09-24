@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Threading;
 using ServiciosEC.Interfaces.Managers;
 using ServiciosEC.Utilidades.ModelosDTO;
+using AppEstudioContable.Models.DTO;    
 
 
 namespace AppEstudioContable.Controllers
@@ -61,6 +62,7 @@ namespace AppEstudioContable.Controllers
                     };
                 }).ToList();
 
+                ViewBag.GraficoIva = ArmarDatosGrafico(model);
                 ViewBag.Cuit = cuit;
                 ViewBag.Id = cliente.IdPersona;
                 ViewBag.RazonSocial = cliente.RazonSocial;
@@ -191,6 +193,28 @@ namespace AppEstudioContable.Controllers
                 TotalRestitucionCreditoFiscal = TotalRestitucionCreditoFiscal,
 
             };
+        }
+
+        private List<IvaGraficoAnualDto> ArmarDatosGrafico(List<PeriodosModel> periodos)
+        {
+            var datos = periodos
+                .GroupBy(p => p.Ano)
+                .Select(g => new IvaGraficoAnualDto
+                {
+                    Anio = g.Key,
+                    TotalCreditoNeto = g.Sum(p => p.Libros
+                        .Sum(l => (l.CreditoNeto27 ?? 0) + (l.CreditoNeto21 ?? 0) +
+                                  (l.CreditoNeto105 ?? 0) + (l.CreditoNeto5 ?? 0) +
+                                  (l.CreditoNeto25 ?? 0) + (l.CreditoNeto0 ?? 0))),
+                    TotalDebitoNeto = g.Sum(p => p.Libros
+                        .Sum(l => (l.DebitoNeto27 ?? 0) + (l.DebitoNeto21 ?? 0) +
+                                  (l.DebitoNeto105 ?? 0) + (l.DebitoNeto5 ?? 0) +
+                                  (l.DebitoNeto25 ?? 0) + (l.DebitoNeto0 ?? 0)))
+                })
+                .OrderBy(d => d.Anio)
+                .ToList();
+
+            return datos;
         }
 
 

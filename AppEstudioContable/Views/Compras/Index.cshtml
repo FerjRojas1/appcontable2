@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<ServiciosEC.Models.Compra>
 
-
-
 @{
     ViewData["Title"] = "Compras";
 }
@@ -22,10 +20,10 @@
 <!-- Filtros -->
 <div class="row justify-content-center">
     <div class="col-md-10">
-        <div class="app-card app-card--accent">
+        <div class="app-card app-card--compras">
             <div class="app-card__header">
                 <h5 class="app-card__title">
-                    <i class="fas fa-calendar-alt me-2"></i> Búsqueda por Período
+                    <i class="fas fa-calendar-alt me-2"></i> Búsqueda de Compras por Período
                 </h5>
             </div>
             <div class="app-card__body">
@@ -51,13 +49,13 @@
                 <div class="row justify-content-center app-gap-2">
                     <div class="col-md-6 col-lg-4">
                         <button type="button" id="filtrarListadoBtnCompras"
-                                class="app-btn app-btn--outline app-btn--lg app-btn--block">
+                                class="app-btn app-btn--compras app-btn--outline app-btn--lg app-btn--block">
                             <i class="fas fa-search"></i> Listado de Compras
                         </button>
                     </div>
                     <div class="col-md-6 col-lg-4">
                         <button type="button" id="verTotalesComprobanteBtnCompras"
-                                class="app-btn app-btn--success app-btn--lg app-btn--block app-btn--shine">
+                                class="app-btn app-btn--compras app-btn--lg app-btn--block app-btn--shine">
                             <i class="fas fa-file-invoice"></i> Totales por Comprobante
                         </button>
                     </div>
@@ -72,13 +70,13 @@
 {
     if (Model != null && Model.Any())
     {
-        <div class="app-card mt-4">
+        <div class="app-card app-card--compras mt-4">
             <div class="app-card__header">
                 <h5 class="app-card__title">Facturas Cargadas</h5>
             </div>
             <div class="app-card__body p-0">
                 <div class="table-responsive">
-                    <table id="tablaCompras" class="app-table app-table--striped app-table--dark">
+                    <table id="tablaCompras" class="app-table app-table--striped app-table--compras">
                         <thead>
                             <tr>
                                 <th>Fecha</th>

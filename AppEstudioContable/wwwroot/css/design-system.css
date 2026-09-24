@@ -998,3 +998,136 @@ h1, h2, h3, h4, h5 {
         opacity: 0;
         transform: translateY(-10px);
     }
+
+/* =========================================================
+   VARIANTES POR MÓDULO — Ventas (celeste) / Compras (gris)
+   ========================================================= */
+
+/* ---------- Variables por módulo ---------- */
+:root {
+    /* Ventas: celeste */
+    --app-ventas: #0891b2; /* celeste principal (igual a --app-info) */
+    --app-ventas-hover: #0e7490;
+    --app-ventas-soft: #cffafe;
+    --app-ventas-border: #67e8f9;
+    /* Compras: gris */
+    --app-compras: #64748b; /* gris principal (igual a --app-secondary) */
+    --app-compras-hover: #475569;
+    --app-compras-soft: #f1f3f5;
+    --app-compras-border: #cbd5e1;
+}
+
+/* ---------- Cards por módulo ---------- */
+.app-card--ventas {
+    border-left: 4px solid var(--app-ventas);
+}
+
+    .app-card--ventas .app-card__header {
+        background: linear-gradient(90deg, var(--app-ventas-soft) 0%, #ffffff 100%);
+        border-bottom: 1px solid var(--app-ventas-border);
+    }
+
+    .app-card--ventas .app-card__title {
+        color: #164e63;
+    }
+
+.app-card--compras {
+    border-left: 4px solid var(--app-compras);
+}
+
+    .app-card--compras .app-card__header {
+        background: linear-gradient(90deg, var(--app-compras-soft) 0%, #ffffff 100%);
+        border-bottom: 1px solid var(--app-compras-border);
+    }
+
+    .app-card--compras .app-card__title {
+        color: #383d41;
+    }
+
+/* ---------- Botones por módulo ---------- */
+.app-btn--ventas {
+    background-color: var(--app-ventas);
+    border-color: var(--app-ventas);
+    color: #fff;
+}
+
+    .app-btn--ventas:hover {
+        background-color: var(--app-ventas-hover);
+        border-color: var(--app-ventas-hover);
+        color: #fff;
+    }
+
+    .app-btn--ventas.app-btn--outline {
+        background-color: transparent;
+        border-color: var(--app-ventas);
+        color: var(--app-ventas);
+    }
+
+        .app-btn--ventas.app-btn--outline:hover {
+            background-color: var(--app-ventas-soft);
+            color: var(--app-ventas-hover);
+        }
+
+.app-btn--compras {
+    background-color: var(--app-compras);
+    border-color: var(--app-compras);
+    color: #fff;
+}
+
+    .app-btn--compras:hover {
+        background-color: var(--app-compras-hover);
+        border-color: var(--app-compras-hover);
+        color: #fff;
+    }
+
+    .app-btn--compras.app-btn--outline {
+        background-color: transparent;
+        border-color: var(--app-compras);
+        color: var(--app-compras);
+    }
+
+        .app-btn--compras.app-btn--outline:hover {
+            background-color: var(--app-compras-soft);
+            color: var(--app-compras-hover);
+        }
+
+/* ---------- Tabla por módulo ---------- */
+.app-table--ventas thead th {
+    background-color: var(--app-ventas) !important;
+    color: #fff !important;
+    text-align: center;
+    border-bottom: 2px solid var(--app-ventas-hover);
+}
+
+.app-table--ventas tbody tr:hover td {
+    background-color: var(--app-ventas-soft) !important;
+}
+
+.app-table--compras thead th {
+    background-color: var(--app-compras) !important;
+    color: #fff !important;
+    text-align: center;
+    border-bottom: 2px solid var(--app-compras-hover);
+}
+
+.app-table--compras tbody tr:hover td {
+    background-color: var(--app-compras-soft) !important;
+}
+
+/* ---------- Título de módulo ---------- */
+.app-module-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.app-module-title--ventas {
+    color: var(--app-ventas);
+}
+
+.app-module-title--compras {
+    color: var(--app-compras);
+}
