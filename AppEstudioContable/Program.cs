@@ -103,22 +103,22 @@ var app = builder.Build();
 //  Aplicar migraciones automáticamente al arrancar
 //if (!app.Environment.IsDevelopment())
 
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<ECContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        try
-        {
-            logger.LogInformation("Aplicando migraciones...");
-            db.Database.Migrate();
-            logger.LogInformation("Migraciones aplicadas correctamente.");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error al aplicar migraciones: {Message}", ex.Message);
-            throw;
-        }
-    }
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var db = scope.ServiceProvider.GetRequiredService<ECContext>();
+    //    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    //    try
+    //    {
+    //        logger.LogInformation("Aplicando migraciones...");
+    //        db.Database.Migrate();
+    //        logger.LogInformation("Migraciones aplicadas correctamente.");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        logger.LogError(ex, "Error al aplicar migraciones: {Message}", ex.Message);
+    //        throw;
+    //    }
+    //}
 
 //else
 //{

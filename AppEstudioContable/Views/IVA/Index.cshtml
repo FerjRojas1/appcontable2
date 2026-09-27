@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <canvas id="graficoIvaAnual" height="110"></canvas>
+                            <canvas id="graficoIvaAnual" style="max-height: 250px; min-height: 180px;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -422,7 +422,7 @@
                 options: {
                     indexAxis: 'y',   // 👈 BARRAS HORIZONTALES
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: { position: 'top' },
                         tooltip: {
@@ -465,6 +465,6 @@
                 renderGrafico(this.value);
             });
         }
-        }
+        });
     </script>
 }
