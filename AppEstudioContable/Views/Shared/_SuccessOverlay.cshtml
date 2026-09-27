@@ -1,0 +1,12 @@
+﻿@if (TempData["SuccessMessage"] != null)
+{
+    <div id="successOverlay" class="app-success-overlay">
+        <div class="app-success-overlay__card">
+            <div class="app-success-overlay__icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="app-success-overlay__title">@TempData["SuccessMessage"]</h3>
+            <p class="app-success-overlay__detail">@TempData["SuccessDetail"]</p>
+        </div>
+    </div>
+}

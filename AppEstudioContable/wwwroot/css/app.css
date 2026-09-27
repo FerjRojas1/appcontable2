@@ -1142,3 +1142,165 @@ h1, h2, h3, h4, h5 {
     font-weight: 700;
     margin: 0;
 }
+
+/* =========================================================
+   SUCCESS OVERLAY — Confirmación visual de acciones
+   ========================================================= */
+.app-success-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    animation: successOverlayIn 0.25s ease-out forwards;
+}
+
+    .app-success-overlay.fade-out {
+        animation: successOverlayOut 0.3s ease-in forwards;
+    }
+
+.app-success-overlay__card {
+    background-color: #fff;
+    border-radius: var(--app-radius-lg);
+    padding: var(--app-space-6) var(--app-space-5);
+    box-shadow: var(--app-shadow-lg);
+    text-align: center;
+    min-width: 280px;
+    max-width: 90vw;
+    animation: successCardIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.app-success-overlay__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #dcfce7;
+    color: var(--app-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto var(--app-space-4);
+    animation: successIconIn 0.5s ease-out 0.1s both;
+}
+
+.app-success-overlay__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--app-text);
+    margin: 0 0 var(--app-space-2);
+}
+
+.app-success-overlay__detail {
+    font-size: 0.95rem;
+    color: var(--app-text-muted);
+    margin: 0;
+}
+
+/* =========================================================
+   SUCCESS OVERLAY — Confirmación visual de acciones
+   ========================================================= */
+.app-success-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    animation: successOverlayIn 0.25s ease-out forwards;
+}
+
+    .app-success-overlay.fade-out {
+        animation: successOverlayOut 0.3s ease-in forwards;
+    }
+
+.app-success-overlay__card {
+    background-color: #fff;
+    border-radius: var(--app-radius-lg);
+    padding: var(--app-space-6) var(--app-space-5);
+    box-shadow: var(--app-shadow-lg);
+    text-align: center;
+    min-width: 280px;
+    max-width: 90vw;
+    animation: successCardIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.app-success-overlay__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #dcfce7;
+    color: var(--app-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto var(--app-space-4);
+    animation: successIconIn 0.5s ease-out 0.1s both;
+}
+
+.app-success-overlay__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--app-text);
+    margin: 0 0 var(--app-space-2);
+}
+
+.app-success-overlay__detail {
+    font-size: 0.95rem;
+    color: var(--app-text-muted);
+    margin: 0;
+}
+
+/* =========================================================
+   SUCCESS OVERLAY — Confirmación visual de acciones
+   ========================================================= */
+
+@keyframes successOverlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes successOverlayOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes successCardIn {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes successIconIn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}

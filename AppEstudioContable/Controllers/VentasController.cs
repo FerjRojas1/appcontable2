@@ -264,9 +264,9 @@ namespace AppEstudioContable.Controllers
 
                 await _ventaManager.Insertar(venta, cancellationToken);
 
-                TempData["MensajeExito"] = $"Venta #{venta.PuntoVenta} - {venta.NroDesde} creada correctamente";
-
-                return RedirectToAction(nameof(Index), new { cuit = clienteAsignado.Cuit });
+                TempData["SuccessMessage"] = "¡Comprobante creado!";
+                TempData["SuccessDetail"] = "Se guardó correctamente.";
+                return RedirectToAction("Altas", new { id = id });
             }
             catch (Exception ex)
             {
@@ -410,9 +410,10 @@ namespace AppEstudioContable.Controllers
                 ViewBag.Cuit = cuit;
                 await _ventaManager.Editar(venta, cancellationToken);
 
-                TempData["MensajeExito"] = $"Venta #{venta.PuntoVenta} - {venta.NroDesde} editada correctamente";
+                TempData["SuccessMessage"] = "¡Comprobante actualizado!";
+                TempData["SuccessDetail"] = "Los cambios se guardaron correctamente.";
 
-                return RedirectToAction(nameof(Index), new { id = IdCliente ,cuit = cuit });
+                return RedirectToAction(nameof(Altas), new { id = IdCliente ,cuit = cuit });
             }
             catch (Exception ex)
             {
@@ -500,7 +501,8 @@ namespace AppEstudioContable.Controllers
             try
             {
                 await _ventaManager.Borrar(id, cancellationToken);
-                TempData["MensajeExito"] = "Venta eliminada correctamente.";
+                TempData["SuccessMessage"] = "¡Comprobante eliminado!";
+                TempData["SuccessDetail"] = "Se borró correctamente.";
                 return RedirectToAction(nameof(Index), new { cuit = cuit });
             }
             catch (Exception ex)

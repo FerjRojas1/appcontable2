@@ -37,8 +37,13 @@
         <!-- Sidebar -->
         <partial name="_Sidebar" />
 
+        <!-- Overlay de éxito -->
+        <partial name="_SuccessOverlay" />
+
+
         <!-- Content Wrapper -->
         <div class="content-wrapper">
+
 
             <!-- Header opcional (navbar de cliente, breadcrumbs, etc.) -->
             @await RenderSectionAsync("ClienteNavbar", required: false)
@@ -61,6 +66,7 @@
     <script src="~/adminlte/plugins/jquery/jquery.min.js" asp-append-version="true"></script>
     <script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/adminlte/dist/js/adminlte.min.js" asp-append-version="true"></script>
+    <script src="~/js/success-overlay.js" asp-append-version="true"></script>
 
 
     <!-- Sección para scripts específicos de la vista -->

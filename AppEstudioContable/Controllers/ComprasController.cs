@@ -208,7 +208,10 @@ namespace AppEstudioContable.Controllers
                 if (ModelState.IsValid)
                 {
                     await _compraManager.Insertar(compraNueva, cancellationToken);
-                    
+
+                    TempData["SuccessMessage"] = "¡Comprobante creado!";
+                    TempData["SuccessDetail"] = "Se guardó correctamente.";
+
                     return RedirectToAction(nameof(Index), new { cuit = cliente.Cuit });
                 }
                 return View(compraNueva);
@@ -351,7 +354,10 @@ namespace AppEstudioContable.Controllers
 
 
                 await _compraManager.Editar(compraActual, cancellationToken);
-               
+
+                TempData["SuccessMessage"] = "¡Comprobante actualizado!";
+                TempData["SuccessDetail"] = "Los cambios se guardaron correctamente.";
+
                 return RedirectToAction(nameof(Index), new { cuit = cuit });
 
             }
@@ -440,7 +446,11 @@ namespace AppEstudioContable.Controllers
             {
                 ViewBag.Cuit = cuit;
                 await _compraManager.Borrar(id, cancellationToken);
-                TempData["MensajeExito"] = "Venta eliminada correctamente.";
+
+                TempData["SuccessMessage"] = "¡Comprobante eliminado!";
+                TempData["SuccessDetail"] = "Se borró correctamente.";
+
+
                 return RedirectToAction(nameof(Index), new { cuit = cuit });
             }
             catch (Exception ex)
@@ -448,6 +458,7 @@ namespace AppEstudioContable.Controllers
                 ModelState.AddModelError(string.Empty, $"Error al eliminar la compra: {ex.Message}");
                 ViewBag.Cuit = cuit;
                 var compra = await _compraManager.ObtenerPorId(id, cancellationToken);
+
                 return View("Delete", compra);
             }
         }
