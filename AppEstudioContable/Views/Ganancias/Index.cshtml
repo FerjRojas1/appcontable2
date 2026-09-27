@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Libro IVA";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
     string[] meses = new[] {
         "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
         "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
@@ -11,139 +12,181 @@
     var cultura = new CultureInfo("es-AR");
 }
 
-<style>
-    /* Estilo personalizado para la fila de totales */
-    .fila-totales {
-        background-color: #f3f3f3 !important;
-        border-top: 2px solid #dee2e6;
-        font-weight: 500;
-        font-size: 0.95rem;
-    }
-
-    .titulo-seccion {
-        text-align: center;
-        font-weight: 600;
-        font-size: 1.15rem;
-        letter-spacing: 1px;
-    }
-</style>
-
-<div class="card border-0 shadow-sm bg-light mb-4">
-    <div class="card-body text-center">
-        <h5 class="mb-0 text-dark">
-            <span class="text-muted">Cliente : </span> @ViewBag.RazonSocial
+<!-- Info del cliente -->
+<div class="app-card mb-4">
+    <div class="app-card__body text-center">
+        <h5 class="mb-0">
+            <span class="app-text-muted">Cliente :</span> @ViewBag.RazonSocial
         </h5>
     </div>
 </div>
 
+<!-- Botón Imprimir -->
 <div class="text-right mb-3" id="no-print">
-    <a class="btn btn-outline-info btn-sm px-3 py-2" href="#" onclick="window.print();">
-        <i class="fas fa-print mr-1"></i> Imprimir
+    <a class="app-btn app-btn--outline app-btn--sm" href="#" onclick="window.print();">
+        <i class="fas fa-print me-1"></i> Imprimir
     </a>
 </div>
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-10">
+
+        <!-- ===================== Cards de totales ===================== -->
+        <div class="row justify-content-center mb-4">
+            <!-- Card Compras -->
+            <div class="col-md-6 mb-3">
+                <div class="app-card app-card--compras">
+                    <div class="app-card__body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="app-text-muted mb-1">
+                                    <i class="fas fa-shopping-cart me-2"></i> Total Compras del Año
+                                </h6>
+                                <small class="app-text-muted">Neto + IVA</small>
+                            </div>
+                            <h3 class="app-h3 app-text-compras">
+                                @Model.Compras.TotalAnual.TotalGeneral.ToString("C2", cultura)
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Ventas -->
+            <div class="col-md-6 mb-3">
+                <div class="app-card app-card--ventas">
+                    <div class="app-card__body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="app-text-muted mb-1">
+                                    <i class="fas fa-file-invoice me-2"></i> Total Ventas del Año
+                                </h6>
+                                <small class="app-text-muted">Neto + IVA</small>
+                            </div>
+                            <h3 class="app-h3 app-text-ventas">
+                                @Model.Ventas.TotalAnual.TotalGeneral.ToString("C2", cultura)
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== Acordeón ===================== -->
+        <div class="row justify-content-center">
+            <div class="col-md-11">
                 <div id="accordion">
 
                     <!-- CARD COMPRAS -->
-                    <div class="card custom-card bg-white mb-4">
-                        <div class="card-header bg-secondary text-white collapsible-header" data-toggle="collapse" href="#collapseCompras">
-                            <h5 class="mb-0 titulo-seccion">COMPRAS</h5>
+                    <div class="app-card app-card--compras mb-4">
+                        <div class="app-card__header app-card__header--compras"
+                             data-toggle="collapse" href="#collapseCompras"
+                             style="cursor: pointer;">
+                            <h5 class="app-card__title">
+                                <i class="fas fa-shopping-cart me-2"></i> COMPRAS
+                            </h5>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
                         <div id="collapseCompras" class="collapse show" data-parent="#accordion">
-                            <div class="card-body p-0">
-                                <table class="table table-sm text-center tabla-iva mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Mes</th>
-                                            <th>Grav 27%</th>
-                                            <th>Grav 21%</th>
-                                            <th>Grav 10.5%</th>
-                                            <th>IVA 27%</th>
-                                            <th>IVA 21%</th>
-                                            <th>IVA 10.5%</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @for (int i = 0; i < 12; i++)
-                                        {
+                            <div class="app-card__body p-0">
+                                <div class="table-responsive">
+                                    <table class="app-table app-table--striped app-table--compras">
+                                        <thead>
                                             <tr>
-                                                <td>@meses[i]</td>
-                                                <td>@Model.Compras.PorMes[i].Neto27.ToString("C2", cultura)</td>
-                                                <td>@Model.Compras.PorMes[i].Neto21.ToString("C2", cultura)</td>
-                                                <td>@Model.Compras.PorMes[i].Neto105.ToString("C2", cultura)</td>
-                                                <td>@Model.Compras.PorMes[i].Iva27.ToString("C2", cultura)</td>
-                                                <td>@Model.Compras.PorMes[i].Iva21.ToString("C2", cultura)</td>
-                                                <td>@Model.Compras.PorMes[i].Iva105.ToString("C2", cultura)</td>
-                                                <td>@Model.Compras.PorMes[i].TotalGeneral.ToString("C2", cultura)</td>
+                                                <th>Mes</th>
+                                                <th>Grav 27%</th>
+                                                <th>Grav 21%</th>
+                                                <th>Grav 10.5%</th>
+                                                <th>IVA 27%</th>
+                                                <th>IVA 21%</th>
+                                                <th>IVA 10.5%</th>
+                                                <th>Total</th>
                                             </tr>
-                                        }
-                                        <tr class="fila-totales">
-                                            <td><strong>TOTALES</strong></td>
-                                            <td>@Model.Compras.TotalAnual.Neto27.ToString("C2", cultura)</td>
-                                            <td>@Model.Compras.TotalAnual.Neto21.ToString("C2", cultura)</td>
-                                            <td>@Model.Compras.TotalAnual.Neto105.ToString("C2", cultura)</td>
-                                            <td>@Model.Compras.TotalAnual.Iva27.ToString("C2", cultura)</td>
-                                            <td>@Model.Compras.TotalAnual.Iva21.ToString("C2", cultura)</td>
-                                            <td>@Model.Compras.TotalAnual.Iva105.ToString("C2", cultura)</td>
-                                            <td>@Model.Compras.TotalAnual.TotalGeneral.ToString("C2", cultura)</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < 12; i++)
+                                            {
+                                                <tr>
+                                                    <td>@meses[i]</td>
+                                                    <td>@Model.Compras.PorMes[i].Neto27.ToString("C2", cultura)</td>
+                                                    <td>@Model.Compras.PorMes[i].Neto21.ToString("C2", cultura)</td>
+                                                    <td>@Model.Compras.PorMes[i].Neto105.ToString("C2", cultura)</td>
+                                                    <td>@Model.Compras.PorMes[i].Iva27.ToString("C2", cultura)</td>
+                                                    <td>@Model.Compras.PorMes[i].Iva21.ToString("C2", cultura)</td>
+                                                    <td>@Model.Compras.PorMes[i].Iva105.ToString("C2", cultura)</td>
+                                                    <td>@Model.Compras.PorMes[i].TotalGeneral.ToString("C2", cultura)</td>
+                                                </tr>
+                                            }
+                                            <tr class="app-table__totals">
+                                                <td><strong>TOTALES</strong></td>
+                                                <td>@Model.Compras.TotalAnual.Neto27.ToString("C2", cultura)</td>
+                                                <td>@Model.Compras.TotalAnual.Neto21.ToString("C2", cultura)</td>
+                                                <td>@Model.Compras.TotalAnual.Neto105.ToString("C2", cultura)</td>
+                                                <td>@Model.Compras.TotalAnual.Iva27.ToString("C2", cultura)</td>
+                                                <td>@Model.Compras.TotalAnual.Iva21.ToString("C2", cultura)</td>
+                                                <td>@Model.Compras.TotalAnual.Iva105.ToString("C2", cultura)</td>
+                                                <td>@Model.Compras.TotalAnual.TotalGeneral.ToString("C2", cultura)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- CARD VENTAS -->
-                    <div class="card custom-card bg-white mb-4">
-                        <div class="card-header bg-info text-white collapsible-header" data-toggle="collapse" href="#collapseVentas">
-                            <h5 class="mb-0 titulo-seccion">VENTAS</h5>
+                    <div class="app-card app-card--ventas mb-4">
+                        <div class="app-card__header app-card__header--ventas"
+                             data-toggle="collapse" href="#collapseVentas"
+                             style="cursor: pointer;">
+                            <h5 class="app-card__title">
+                                <i class="fas fa-file-invoice me-2"></i> VENTAS
+                            </h5>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
                         <div id="collapseVentas" class="collapse show" data-parent="#accordion">
-                            <div class="card-body p-0">
-                                <table class="table table-sm text-center tabla-iva mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Mes</th>
-                                            <th>Grav 27%</th>
-                                            <th>Grav 21%</th>
-                                            <th>Grav 10.5%</th>
-                                            <th>IVA 27%</th>
-                                            <th>IVA 21%</th>
-                                            <th>IVA 10.5%</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @for (int i = 0; i < 12; i++)
-                                        {
+                            <div class="app-card__body p-0">
+                                <div class="table-responsive">
+                                    <table class="app-table app-table--striped app-table--ventas">
+                                        <thead>
                                             <tr>
-                                                <td>@meses[i]</td>
-                                                <td>@Model.Ventas.PorMes[i].Neto27.ToString("C2", cultura)</td>
-                                                <td>@Model.Ventas.PorMes[i].Neto21.ToString("C2", cultura)</td>
-                                                <td>@Model.Ventas.PorMes[i].Neto105.ToString("C2", cultura)</td>
-                                                <td>@Model.Ventas.PorMes[i].Iva27.ToString("C2", cultura)</td>
-                                                <td>@Model.Ventas.PorMes[i].Iva21.ToString("C2", cultura)</td>
-                                                <td>@Model.Ventas.PorMes[i].Iva105.ToString("C2", cultura)</td>
-                                                <td>@Model.Ventas.PorMes[i].TotalGeneral.ToString("C2", cultura)</td>
+                                                <th>Mes</th>
+                                                <th>Grav 27%</th>
+                                                <th>Grav 21%</th>
+                                                <th>Grav 10.5%</th>
+                                                <th>IVA 27%</th>
+                                                <th>IVA 21%</th>
+                                                <th>IVA 10.5%</th>
+                                                <th>Total</th>
                                             </tr>
-                                        }
-                                        <tr class="fila-totales">
-                                            <td><strong>TOTALES</strong></td>
-                                            <td>@Model.Ventas.TotalAnual.Neto27.ToString("C2", cultura)</td>
-                                            <td>@Model.Ventas.TotalAnual.Neto21.ToString("C2", cultura)</td>
-                                            <td>@Model.Ventas.TotalAnual.Neto105.ToString("C2", cultura)</td>
-                                            <td>@Model.Ventas.TotalAnual.Iva27.ToString("C2", cultura)</td>
-                                            <td>@Model.Ventas.TotalAnual.Iva21.ToString("C2", cultura)</td>
-                                            <td>@Model.Ventas.TotalAnual.Iva105.ToString("C2", cultura)</td>
-                                            <td>@Model.Ventas.TotalAnual.TotalGeneral.ToString("C2", cultura)</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < 12; i++)
+                                            {
+                                                <tr>
+                                                    <td>@meses[i]</td>
+                                                    <td>@Model.Ventas.PorMes[i].Neto27.ToString("C2", cultura)</td>
+                                                    <td>@Model.Ventas.PorMes[i].Neto21.ToString("C2", cultura)</td>
+                                                    <td>@Model.Ventas.PorMes[i].Neto105.ToString("C2", cultura)</td>
+                                                    <td>@Model.Ventas.PorMes[i].Iva27.ToString("C2", cultura)</td>
+                                                    <td>@Model.Ventas.PorMes[i].Iva21.ToString("C2", cultura)</td>
+                                                    <td>@Model.Ventas.PorMes[i].Iva105.ToString("C2", cultura)</td>
+                                                    <td>@Model.Ventas.PorMes[i].TotalGeneral.ToString("C2", cultura)</td>
+                                                </tr>
+                                            }
+                                            <tr class="app-table__totals">
+                                                <td><strong>TOTALES</strong></td>
+                                                <td>@Model.Ventas.TotalAnual.Neto27.ToString("C2", cultura)</td>
+                                                <td>@Model.Ventas.TotalAnual.Neto21.ToString("C2", cultura)</td>
+                                                <td>@Model.Ventas.TotalAnual.Neto105.ToString("C2", cultura)</td>
+                                                <td>@Model.Ventas.TotalAnual.Iva27.ToString("C2", cultura)</td>
+                                                <td>@Model.Ventas.TotalAnual.Iva21.ToString("C2", cultura)</td>
+                                                <td>@Model.Ventas.TotalAnual.Iva105.ToString("C2", cultura)</td>
+                                                <td>@Model.Ventas.TotalAnual.TotalGeneral.ToString("C2", cultura)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -154,14 +197,12 @@
     </div>
 </section>
 
-
-<div class="mt-4 ms-3">
+<!-- Botón Volver -->
+<div class="app-mt-4">
     <a asp-controller="Cliente"
        asp-action="Details"
        asp-route-id="@ViewBag.Id"
-       class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left"></i> Volver
+       class="app-btn app-btn--outline">
+        <i class="fas fa-arrow-left me-2"></i> Volver
     </a>
 </div>
-
-

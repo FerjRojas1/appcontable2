@@ -1,6 +1,29 @@
 ﻿/* =========================================================
    DESIGN SYSTEM — App Estudio Contable
    Prefijo: app-*  (para no chocar con Bootstrap/AdminLTE)
+   ---------------------------------------------------------
+   Índice:
+     1. Variables
+     2. Base
+     3. Tipografía utilitaria
+     4. Botones (app-btn)
+     5. Tarjetas (app-card)
+     6. Tablas (app-table)
+     7. Formularios (app-form)
+     8. Badges / Estados (app-badge)
+     9. Alertas (app-alert)
+     10. Estados vacíos (app-empty)
+     11. Paginación (app-pagination)
+     12. Utilidades
+     13. Variantes de card con color
+     14. Input file custom
+     15. Checkbox custom
+     16. Details / Summary
+     17. Modal
+     18. Bloque JSON
+     19. Variantes por módulo (Ventas / Compras)
+     20. DataTables
+     21. FullCalendar
    ========================================================= */
 
 /* ---------- 1. Variables ---------- */
@@ -45,6 +68,15 @@
     --app-font-size-sm: 0.875rem;
     --app-font-size: 1rem;
     --app-font-size-lg: 1.15rem;
+    /* Módulos: Ventas (celeste) / Compras (gris) */
+    --app-ventas: #0891b2;
+    --app-ventas-hover: #0e7490;
+    --app-ventas-soft: #cffafe;
+    --app-ventas-border: #67e8f9;
+    --app-compras: #64748b;
+    --app-compras-hover: #475569;
+    --app-compras-soft: #f1f3f5;
+    --app-compras-border: #cbd5e1;
 }
 
 /* ---------- 2. Base ---------- */
@@ -118,7 +150,6 @@ h1, h2, h3, h4, h5 {
         box-shadow: 0 0 0 0.25rem rgba(37, 140, 251, 0.35);
     }
 
-/* Variantes de color */
 .app-btn--primary {
     background-color: var(--app-primary);
     border-color: var(--app-primary);
@@ -179,7 +210,6 @@ h1, h2, h3, h4, h5 {
         color: #fff;
     }
 
-/* Tamaños */
 .app-btn--sm {
     padding: 0.3rem 0.7rem;
     font-size: 0.85rem;
@@ -194,7 +224,6 @@ h1, h2, h3, h4, h5 {
     width: 100%;
 }
 
-/* Botón flotante "volver" */
 .app-btn-volver {
     position: fixed;
     bottom: var(--app-space-5);
@@ -215,7 +244,6 @@ h1, h2, h3, h4, h5 {
         color: #fff;
     }
 
-/* Efecto shine (opcional) */
 .app-btn--shine {
     position: relative;
     overflow: hidden;
@@ -276,9 +304,45 @@ h1, h2, h3, h4, h5 {
     background-color: #fafbfc;
 }
 
-/* Variante con borde izquierdo de color */
 .app-card--accent {
     border-left: 4px solid var(--app-info);
+}
+
+/* Variantes de card con color (borde superior) */
+.app-card--warning {
+    border-top: 3px solid var(--app-warning);
+}
+
+.app-card--success {
+    border-top: 3px solid var(--app-success);
+}
+
+.app-card--danger {
+    border-top: 3px solid var(--app-danger);
+}
+
+.app-card--info {
+    border-top: 3px solid var(--app-info);
+}
+
+.app-card__header--warning {
+    background-color: #fef3c7;
+    color: #78350f;
+}
+
+.app-card__header--success {
+    background-color: #dcfce7;
+    color: #14532d;
+}
+
+.app-card__header--danger {
+    background-color: #fee2e2;
+    color: #7f1d1d;
+}
+
+.app-card__header--info {
+    background-color: #cffafe;
+    color: #164e63;
 }
 
 /* ---------- 6. Tablas (app-table) ---------- */
@@ -314,7 +378,6 @@ h1, h2, h3, h4, h5 {
     background-color: var(--app-bg);
 }
 
-/* Tabla oscura para listados densos */
 .app-table--dark thead th {
     background-color: #343a40 !important;
     color: #fff !important;
@@ -333,7 +396,6 @@ h1, h2, h3, h4, h5 {
     background-color: #dbeeff !important;
 }
 
-/* Fila de totales */
 .app-table__totals {
     background-color: #f3f3f3 !important;
     border-top: 2px solid var(--app-border);
@@ -382,7 +444,6 @@ h1, h2, h3, h4, h5 {
     height: 42px;
 }
 
-/* Input con ícono a la izquierda */
 .app-input-icon {
     position: relative;
 }
@@ -401,7 +462,6 @@ h1, h2, h3, h4, h5 {
         padding-left: 42px;
     }
 
-/* Validación */
 .app-form-control.is-invalid {
     border-color: var(--app-danger);
 }
@@ -490,22 +550,67 @@ h1, h2, h3, h4, h5 {
     color: #164e63;
 }
 
-/* ---------- 10. Estados vacíos ---------- */
+/* Alerta dismissible (unificado) */
+.app-alert--dismissible {
+    position: relative;
+    padding-right: 2.5rem;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+    .app-alert--dismissible.fade-out {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+.app-alert__close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+    .app-alert__close:hover {
+        opacity: 1;
+    }
+
+/* ---------- 10. Estados vacíos (app-empty) ---------- */
 .app-empty {
     text-align: center;
     padding: var(--app-space-6) var(--app-space-4);
     color: var(--app-text-muted);
+    background-color: var(--app-surface);
+    border-radius: var(--app-radius-lg);
+    box-shadow: var(--app-shadow-sm);
+    margin-top: var(--app-space-5);
 }
 
     .app-empty i {
-        font-size: 2.5rem;
+        font-size: 3rem;
         margin-bottom: var(--app-space-3);
-        opacity: 0.5;
+        opacity: 0.4;
+        color: var(--app-primary);
+    }
+
+    .app-empty h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--app-text);
+        margin-bottom: var(--app-space-2);
     }
 
     .app-empty p {
-        margin: 0;
+        margin-bottom: var(--app-space-4);
         font-size: 0.95rem;
+    }
+
+    .app-empty .app-btn {
+        margin-top: var(--app-space-3);
     }
 
 /* ---------- 11. Paginación (app-pagination) ---------- */
@@ -614,67 +719,7 @@ h1, h2, h3, h4, h5 {
     gap: var(--app-space-3);
 }
 
-/* ---------- Variantes de card con color ---------- */
-.app-card--warning {
-    border-top: 3px solid var(--app-warning);
-}
-
-.app-card--success {
-    border-top: 3px solid var(--app-success);
-}
-
-.app-card--danger {
-    border-top: 3px solid var(--app-danger);
-}
-
-.app-card--info {
-    border-top: 3px solid var(--app-info);
-}
-
-.app-card__header--warning {
-    background-color: #fef3c7;
-    color: #78350f;
-}
-
-.app-card__header--success {
-    background-color: #dcfce7;
-    color: #14532d;
-}
-
-.app-card__header--danger {
-    background-color: #fee2e2;
-    color: #7f1d1d;
-}
-
-.app-card__header--info {
-    background-color: #cffafe;
-    color: #164e63;
-}
-
-/* ---------- Alerta dismissible ---------- */
-.app-alert--dismissible {
-    position: relative;
-    padding-right: 2.5rem;
-}
-
-.app-alert__close {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    background: transparent;
-    border: none;
-    font-size: 1.25rem;
-    line-height: 1;
-    color: inherit;
-    opacity: 0.6;
-    cursor: pointer;
-}
-
-    .app-alert__close:hover {
-        opacity: 1;
-    }
-
-/* ---------- Input file custom ---------- */
+/* ---------- 14. Input file custom ---------- */
 .app-file {
     position: relative;
 }
@@ -707,7 +752,7 @@ h1, h2, h3, h4, h5 {
         color: var(--app-primary);
     }
 
-/* ---------- Checkbox custom ---------- */
+/* ---------- 15. Checkbox custom ---------- */
 .app-check {
     display: flex;
     align-items: center;
@@ -727,7 +772,7 @@ h1, h2, h3, h4, h5 {
     cursor: pointer;
 }
 
-/* ---------- Details / Summary ---------- */
+/* ---------- 16. Details / Summary ---------- */
 .app-details {
     margin-bottom: 1rem;
     border: 1px solid var(--app-border);
@@ -769,7 +814,7 @@ h1, h2, h3, h4, h5 {
     background-color: #fff;
 }
 
-/* ---------- Modal ---------- */
+/* ---------- 17. Modal ---------- */
 .app-modal .app-modal__header {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--app-border);
@@ -813,57 +858,140 @@ h1, h2, h3, h4, h5 {
         height: 3rem;
     }
 
-/* ---------- Estado vacío ---------- */
-.app-empty {
-    text-align: center;
-    padding: var(--app-space-6) var(--app-space-4);
-    color: var(--app-text-muted);
-    background-color: var(--app-surface);
-    border-radius: var(--app-radius-lg);
-    box-shadow: var(--app-shadow-sm);
-    margin-top: var(--app-space-5);
+/* ---------- 18. Bloque JSON (auditoría) ---------- */
+.app-json {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    padding: var(--app-space-4);
+    border-radius: var(--app-radius);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    max-height: 60vh;
+    overflow-y: auto;
 }
 
-    .app-empty i {
-        font-size: 3rem;
-        margin-bottom: var(--app-space-3);
-        opacity: 0.4;
-        color: var(--app-primary);
+/* ---------- 19. Variantes por módulo ---------- */
+
+/* Cards por módulo */
+.app-card--ventas {
+    border-left: 4px solid var(--app-ventas);
+}
+
+    .app-card--ventas .app-card__header {
+        background: linear-gradient(90deg, var(--app-ventas-soft) 0%, #ffffff 100%);
+        border-bottom: 1px solid var(--app-ventas-border);
     }
 
-    .app-empty h4 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--app-text);
-        margin-bottom: var(--app-space-2);
+    .app-card--ventas .app-card__title {
+        color: #164e63;
     }
 
-    .app-empty p {
-        margin-bottom: var(--app-space-4);
-        font-size: 0.95rem;
+.app-card--compras {
+    border-left: 4px solid var(--app-compras);
+}
+
+    .app-card--compras .app-card__header {
+        background: linear-gradient(90deg, var(--app-compras-soft) 0%, #ffffff 100%);
+        border-bottom: 1px solid var(--app-compras-border);
     }
 
-    .app-empty .app-btn {
-        margin-top: var(--app-space-3);
+    .app-card--compras .app-card__title {
+        color: #383d41;
     }
 
-    /* ---------- Bloque JSON (auditoría) ---------- */
-    .app-json {
-        background-color: #1e293b;
-        color: #e2e8f0;
-        padding: var(--app-space-4);
-        border-radius: var(--app-radius);
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        font-size: 0.8rem;
-        line-height: 1.5;
-        white-space: pre-wrap;
-        word-break: break-word;
-        margin: 0;
-        max-height: 60vh;
-        overflow-y: auto;
+/* Botones por módulo */
+.app-btn--ventas {
+    background-color: var(--app-ventas);
+    border-color: var(--app-ventas);
+    color: #fff;
+}
+
+    .app-btn--ventas:hover {
+        background-color: var(--app-ventas-hover);
+        border-color: var(--app-ventas-hover);
+        color: #fff;
     }
 
-/* ---------- DataTables: buscador y controles ---------- */
+    .app-btn--ventas.app-btn--outline {
+        background-color: transparent;
+        border-color: var(--app-ventas);
+        color: var(--app-ventas);
+    }
+
+        .app-btn--ventas.app-btn--outline:hover {
+            background-color: var(--app-ventas-soft);
+            color: var(--app-ventas-hover);
+        }
+
+.app-btn--compras {
+    background-color: var(--app-compras);
+    border-color: var(--app-compras);
+    color: #fff;
+}
+
+    .app-btn--compras:hover {
+        background-color: var(--app-compras-hover);
+        border-color: var(--app-compras-hover);
+        color: #fff;
+    }
+
+    .app-btn--compras.app-btn--outline {
+        background-color: transparent;
+        border-color: var(--app-compras);
+        color: var(--app-compras);
+    }
+
+        .app-btn--compras.app-btn--outline:hover {
+            background-color: var(--app-compras-soft);
+            color: var(--app-compras-hover);
+        }
+
+/* Tablas por módulo */
+.app-table--ventas thead th {
+    background-color: var(--app-ventas) !important;
+    color: #fff !important;
+    text-align: center;
+    border-bottom: 2px solid var(--app-ventas-hover);
+}
+
+.app-table--ventas tbody tr:hover td {
+    background-color: var(--app-ventas-soft) !important;
+}
+
+.app-table--compras thead th {
+    background-color: var(--app-compras) !important;
+    color: #fff !important;
+    text-align: center;
+    border-bottom: 2px solid var(--app-compras-hover);
+}
+
+.app-table--compras tbody tr:hover td {
+    background-color: var(--app-compras-soft) !important;
+}
+
+/* Título de módulo */
+.app-module-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.app-module-title--ventas {
+    color: var(--app-ventas);
+}
+
+.app-module-title--compras {
+    color: var(--app-compras);
+}
+
+/* ---------- 20. DataTables ---------- */
 .dataTables_wrapper .dataTables_filter {
     margin-bottom: var(--app-space-3);
 }
@@ -894,7 +1022,6 @@ h1, h2, h3, h4, h5 {
             outline: none;
         }
 
-/* Selector de cantidad de filas */
 .dataTables_wrapper .dataTables_length {
     margin-bottom: var(--app-space-3);
 }
@@ -923,18 +1050,17 @@ h1, h2, h3, h4, h5 {
             outline: none;
         }
 
-/* Info de paginación */
 .dataTables_wrapper .dataTables_info {
     color: var(--app-text-muted);
     font-size: 0.9rem;
     padding-top: var(--app-space-3);
 }
 
-/* Paginación */
 .dataTables_wrapper .dataTables_paginate {
     padding-top: var(--app-space-3);
 }
-/* ---------- FullCalendar ---------- */
+
+/* ---------- 21. FullCalendar ---------- */
 #calendar {
     font-family: var(--app-font);
 }
@@ -990,144 +1116,29 @@ h1, h2, h3, h4, h5 {
     background-color: var(--app-primary-soft);
 }
 
-.app-alert--dismissible {
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+/* Header de card por módulo */
+.app-card__header--ventas {
+    background: linear-gradient(90deg, var(--app-ventas-soft) 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--app-ventas-border);
+    color: #164e63;
 }
 
-    .app-alert--dismissible.fade-out {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-/* =========================================================
-   VARIANTES POR MÓDULO — Ventas (celeste) / Compras (gris)
-   ========================================================= */
-
-/* ---------- Variables por módulo ---------- */
-:root {
-    /* Ventas: celeste */
-    --app-ventas: #0891b2; /* celeste principal (igual a --app-info) */
-    --app-ventas-hover: #0e7490;
-    --app-ventas-soft: #cffafe;
-    --app-ventas-border: #67e8f9;
-    /* Compras: gris */
-    --app-compras: #64748b; /* gris principal (igual a --app-secondary) */
-    --app-compras-hover: #475569;
-    --app-compras-soft: #f1f3f5;
-    --app-compras-border: #cbd5e1;
+.app-card__header--compras {
+    background: linear-gradient(90deg, var(--app-compras-soft) 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--app-compras-border);
+    color: #383d41;
 }
 
-/* ---------- Cards por módulo ---------- */
-.app-card--ventas {
-    border-left: 4px solid var(--app-ventas);
-}
-
-    .app-card--ventas .app-card__header {
-        background: linear-gradient(90deg, var(--app-ventas-soft) 0%, #ffffff 100%);
-        border-bottom: 1px solid var(--app-ventas-border);
-    }
-
-    .app-card--ventas .app-card__title {
-        color: #164e63;
-    }
-
-.app-card--compras {
-    border-left: 4px solid var(--app-compras);
-}
-
-    .app-card--compras .app-card__header {
-        background: linear-gradient(90deg, var(--app-compras-soft) 0%, #ffffff 100%);
-        border-bottom: 1px solid var(--app-compras-border);
-    }
-
-    .app-card--compras .app-card__title {
-        color: #383d41;
-    }
-
-/* ---------- Botones por módulo ---------- */
-.app-btn--ventas {
-    background-color: var(--app-ventas);
-    border-color: var(--app-ventas);
-    color: #fff;
-}
-
-    .app-btn--ventas:hover {
-        background-color: var(--app-ventas-hover);
-        border-color: var(--app-ventas-hover);
-        color: #fff;
-    }
-
-    .app-btn--ventas.app-btn--outline {
-        background-color: transparent;
-        border-color: var(--app-ventas);
-        color: var(--app-ventas);
-    }
-
-        .app-btn--ventas.app-btn--outline:hover {
-            background-color: var(--app-ventas-soft);
-            color: var(--app-ventas-hover);
-        }
-
-.app-btn--compras {
-    background-color: var(--app-compras);
-    border-color: var(--app-compras);
-    color: #fff;
-}
-
-    .app-btn--compras:hover {
-        background-color: var(--app-compras-hover);
-        border-color: var(--app-compras-hover);
-        color: #fff;
-    }
-
-    .app-btn--compras.app-btn--outline {
-        background-color: transparent;
-        border-color: var(--app-compras);
-        color: var(--app-compras);
-    }
-
-        .app-btn--compras.app-btn--outline:hover {
-            background-color: var(--app-compras-soft);
-            color: var(--app-compras-hover);
-        }
-
-/* ---------- Tabla por módulo ---------- */
-.app-table--ventas thead th {
-    background-color: var(--app-ventas) !important;
-    color: #fff !important;
-    text-align: center;
-    border-bottom: 2px solid var(--app-ventas-hover);
-}
-
-.app-table--ventas tbody tr:hover td {
-    background-color: var(--app-ventas-soft) !important;
-}
-
-.app-table--compras thead th {
-    background-color: var(--app-compras) !important;
-    color: #fff !important;
-    text-align: center;
-    border-bottom: 2px solid var(--app-compras-hover);
-}
-
-.app-table--compras tbody tr:hover td {
-    background-color: var(--app-compras-soft) !important;
-}
-
-/* ---------- Título de módulo ---------- */
-.app-module-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.app-module-title--ventas {
+.app-text-ventas {
     color: var(--app-ventas);
 }
 
-.app-module-title--compras {
+.app-text-compras {
     color: var(--app-compras);
+}
+
+.app-h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
 }

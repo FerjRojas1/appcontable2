@@ -1,15 +1,15 @@
-/* =========================================================
-   OVERRIDES específicos del proyecto
+ï»¿/* =========================================================
+   OVERRIDES especÃ­ficos del proyecto
    (usar solo cuando no haya forma de resolverlo con el DS)
    ========================================================= */
 
-/* Ejemplo: colores de fondo por módulo */
+/* Colores de fondo por mÃ³dulo (usan variables del DS) */
 .bg-ventas {
-    background-color: #e3f2fd;
+    background-color: var(--app-ventas-soft);
 }
 
 .bg-compras {
-    background-color: #f1f3f5;
+    background-color: var(--app-compras-soft);
 }
 
 /* Navbar de cliente full width */
