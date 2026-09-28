@@ -302,6 +302,7 @@ h1, h2, h3, h4, h5 {
     padding: var(--app-space-3) var(--app-space-4);
     border-top: 1px solid var(--app-border);
     background-color: #fafbfc;
+    text-align: center;
 }
 
 .app-card--accent {
@@ -843,6 +844,7 @@ h1, h2, h3, h4, h5 {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
+    text-align: center;
 }
 
 .app-modal--loading .app-modal__body {

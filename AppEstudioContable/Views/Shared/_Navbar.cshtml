@@ -9,21 +9,23 @@
     </ul>
 
     <!-- Menú de usuario (derecha) -->
-    <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i>
-                <span class="d-none d-md-inline ml-1">@User.Identity?.Name</span>
+    <ul class="navbar-nav ml-auto align-items-center">
+        <!-- Nombre del usuario (visible en desktop) -->
+        <li class="nav-item d-none d-md-block mr-3">
+            <span class="app-text-muted">
+                <i class="far fa-user me-1"></i>
+                @User.Identity?.Name
+            </span>
+        </li>
+
+        <!-- Botón Cerrar sesión -->
+        <li class="nav-item">
+            <a asp-controller="Auth"
+               asp-action="Logout"
+               class="app-btn app-btn--outline app-btn--sm">
+                <i class="fas fa-sign-out-alt me-1"></i>
+                <span class="d-none d-md-inline">Cerrar sesión</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-menu-animate">
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-user-cog mr-2"></i> Perfil
-                </a>
-                <div class="dropdown-divider"></div>
-                <a asp-controller="Auth" asp-action="Logout" class="dropdown-item text-danger">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
-                </a>
-            </div>
         </li>
     </ul>
 </nav>
