@@ -197,26 +197,68 @@ namespace AppEstudioContable.Controllers
 
         private List<IvaGraficoAnualDto> ArmarDatosGrafico(List<PeriodosModel> periodos)
         {
-            var datos = periodos
+            return periodos
                 .GroupBy(p => p.Ano)
                 .Select(g => new IvaGraficoAnualDto
                 {
                     Anio = g.Key,
-                    TotalCreditoNeto = g.Sum(p => p.Libros
-                        .Sum(l => (l.CreditoNeto27 ?? 0) + (l.CreditoNeto21 ?? 0) +
-                                  (l.CreditoNeto105 ?? 0) + (l.CreditoNeto5 ?? 0) +
-                                  (l.CreditoNeto25 ?? 0) + (l.CreditoNeto0 ?? 0))),
-                    TotalDebitoNeto = g.Sum(p => p.Libros
-                        .Sum(l => (l.DebitoNeto27 ?? 0) + (l.DebitoNeto21 ?? 0) +
-                                  (l.DebitoNeto105 ?? 0) + (l.DebitoNeto5 ?? 0) +
-                                  (l.DebitoNeto25 ?? 0) + (l.DebitoNeto0 ?? 0)))
+
+                    TotalCreditoIva = g.Sum(p => (p.Libros ?? new List<LibroIva>())
+                        .Sum(l => (l.CreditoIva27 ?? 0) + (l.CreditoIva21 ?? 0) +
+                                  (l.CreditoIva105 ?? 0) + (l.CreditoIva5 ?? 0) +
+                                  (l.CreditoIva25 ?? 0) + (l.CreditoIva0 ?? 0) +
+                                  (l.CreditoIvaOtros ?? 0))),
+
+                    TotalDebitoIva = g.Sum(p => (p.Libros ?? new List<LibroIva>())
+                        .Sum(l => (l.DebitoIva27 ?? 0) + (l.DebitoIva21 ?? 0) +
+                                  (l.DebitoIva105 ?? 0) + (l.DebitoIva5 ?? 0) +
+                                  (l.DebitoIva25 ?? 0) + (l.DebitoIva0 ?? 0) +
+                                  (l.DebitoIvaOtros ?? 0)))
                 })
                 .OrderBy(d => d.Anio)
                 .ToList();
-
-            return datos;
         }
 
+        [HttpGet]
+        [Route("{controller}/periodos/{cuit?}")]
+        public async Task<ActionResult> PeriodosCargados(string cuit, CancellationToken cancellationToken)
+        {
+            if (cuit == null)
+                return BadRequest("Debe ingresar un cuit.");
+
+            try
+            {
+                var cliente = await _clienteManager.ObtenerClientePorCuitAsync(cuit, cancellationToken);
+
+                if (cliente == null)
+                    throw new Exception($"No se encontró ningún cliente con el cuit {cuit}");
+
+                var periodosCargados = await _ivaManager.ObtenerPeriodosPorClienteAsync(cliente, cancellationToken);
+
+                var model = periodosCargados.Select(p =>
+                {
+                    var (fecha, librosIva) = p;
+                    return new PeriodosModel
+                    {
+                        Cuit = cuit,
+                        Ano = fecha.Year,
+                        Mes = fecha.Month,
+                        Libros = librosIva,
+                    };
+                }).ToList();
+
+                ViewBag.Cuit = cuit;
+                ViewBag.Id = cliente.IdPersona;
+                ViewBag.RazonSocial = cliente.RazonSocial;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return View("Error", new ErrorViewModel { Message = ex.Message });
+            }
+        }
 
 
         //// GET: IVAController/Create

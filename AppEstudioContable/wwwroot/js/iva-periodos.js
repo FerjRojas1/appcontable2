@@ -1,19 +1,16 @@
 ﻿// =========================================================
-// IVA / Index — Lógica de la vista
+// IVA / PeriodosCargados — Lógica del modal Libro IVA
 // =========================================================
 
 $(document).ready(function () {
 
-    // ===================== Datos del gráfico =====================
-    // vienen desde la vista como variable global
-    // (window.datosGraficoIva)
-    const datosGrafico = window.datosGraficoIva || [];
-    let chartIva = null;
-
     // ===================== Formateo moneda ARS =====================
     function formatCurrency(valor) {
         if (valor === null || valor === undefined) return '-';
-        return valor.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+        return Number(valor).toLocaleString('es-AR', {
+            style: 'currency',
+            currency: 'ARS'
+        });
     }
 
     // ===================== Formateo fecha (dd/mm/yyyy) =====================
@@ -90,103 +87,5 @@ $(document).ready(function () {
         $('#campoPercepcionesIVA').text(formatCurrency(libro.percepcionesIva));
         $('#campoSaldoTecnicoNeto').text(formatCurrency(libro.saldoTecnicoNeto));
     });
-
-    // ===================== Gráfico IVA Anual =====================
-    function renderGrafico(anio) {
-        const dato = datosGrafico.find(d => d.anio === parseInt(anio));
-        if (!dato) return;
-
-        const canvas = document.getElementById('graficoIvaAnual');
-        if (!canvas) return;
-
-        // Destruir gráfico previo para evitar duplicados
-        if (chartIva) {
-            chartIva.destroy();
-        }
-
-        chartIva = new Chart(canvas, {
-            type: 'bar',
-            data: {
-                labels: ['IVA Total'],
-                datasets: [
-                    {
-                        label: 'IVA Crédito Fiscal',
-                        data: [dato.totalCreditoIva],
-                        backgroundColor: '#0891b2',
-                        borderColor: '#0e7490',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'IVA Débito Fiscal',
-                        data: [dato.totalDebitoIva],
-                        backgroundColor: '#64748b',
-                        borderColor: '#475569',
-                        borderWidth: 1
-                    }
-                ]
-            },
-
-            options: {
-                indexAxis: 'y',   // Barras horizontales
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const valor = context.parsed.x || 0;
-                                return context.dataset.label + ': ' +
-                                    valor.toLocaleString('es-AR', {
-                                        style: 'currency',
-                                        currency: 'ARS'
-                                    });
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return value.toLocaleString('es-AR', {
-                                    style: 'currency',
-                                    currency: 'ARS',
-                                    maximumFractionDigits: 0
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Actualizar cards
-        document.getElementById('totalCreditoNeto').textContent =
-            (dato.totalCreditoIva || 0).toLocaleString('es-AR', {
-                style: 'currency',
-                currency: 'ARS'
-            });
-
-        document.getElementById('totalDebitoNeto').textContent =
-            (dato.totalDebitoIva || 0).toLocaleString('es-AR', {
-                style: 'currency',
-                currency: 'ARS'
-            });
-
-        document.getElementById('anioCreditoLabel').textContent = `Año ${dato.anio}`;
-        document.getElementById('anioDebitoLabel').textContent = `Año ${dato.anio}`;
-    }
-
-    // Render inicial + listener del dropdown
-    const selectorAnio = document.getElementById('anioGrafico');
-    if (selectorAnio && datosGrafico.length > 0) {
-        renderGrafico(selectorAnio.value);
-
-        selectorAnio.addEventListener('change', function () {
-            renderGrafico(this.value);
-        });
-    }
 
 });

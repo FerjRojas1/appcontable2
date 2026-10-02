@@ -11,5 +11,7 @@ namespace AppEstudioContable.Models.DTO
         public int Anio { get; set; }
         public decimal TotalCreditoNeto { get; set; }
         public decimal TotalDebitoNeto { get; set; }
+        public decimal TotalCreditoIva { get; set; }
+        public decimal TotalDebitoIva { get; set; }
     }
 }

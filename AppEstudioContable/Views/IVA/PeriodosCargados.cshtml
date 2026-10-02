@@ -1,11 +1,12 @@
 ﻿@model List<AppEstudioContable.Models.PeriodosModel>
 
 @{
-    ViewBag.Title = "IVA";
+    ViewBag.Title = "Períodos Cargados";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-    var graficoIva = ViewBag.GraficoIva as List<AppEstudioContable.Models.DTO.IvaGraficoAnualDto>
-                     ?? new List<AppEstudioContable.Models.DTO.IvaGraficoAnualDto>();
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 }
 
 <!-- Info del cliente -->
@@ -17,174 +18,85 @@
     </div>
 </div>
 
-<!-- ===================== Cards de acciones ===================== -->
 <section class="content">
     <div class="container-fluid">
-        <div class="row justify-content-center mt-3 g-3">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
 
-            <!-- Card: Período IVA -->
-            <div class="col-md-6 d-flex">
-                <div class="app-card w-100 d-flex flex-column">
+                <div class="app-card">
                     <div class="app-card__header">
                         <h5 class="app-card__title">
-                            <i class="fas fa-calendar-alt me-2"></i> Período IVA
+                            <i class="fas fa-list me-2"></i> Períodos con Comprobantes Cargados
                         </h5>
                     </div>
-                    <div class="app-card__body d-flex flex-column flex-grow-1">
-                        <p class="app-text-muted mb-3">
-                            Consultá el detalle de un período específico ingresando mes y año.
-                        </p>
-
-                        <form asp-action="DetailsPeriodo" method="get" class="mb-0">
-                            <input type="hidden" name="Cuit" value="@ViewBag.Cuit" />
-
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="Mes" class="app-form-label">Mes</label>
-                                    <input type="number" class="app-form-control" id="Mes" name="Mes"
-                                           min="1" max="12" required placeholder="MM" />
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="Anio" class="app-form-label">Año</label>
-                                    <input type="number" class="app-form-control" id="Anio" name="año"
-                                           min="2000" max="2100" required placeholder="AAAA" />
-                                </div>
+                    <div class="app-card__body">
+                        @if (Model != null && Model.Any())
+                        {
+                            <div class="table-responsive">
+                                <table id="tablaPeriodos" class="app-table app-table--striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Período</th>
+                                            <th class="text-center">Año</th>
+                                            <th class="text-center">Mes</th>
+                                            <th class="text-center">Cantidad de Libros</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var p in Model)
+                                        {
+                                            <tr>
+                                                <td class="text-center">
+                                                    <strong>@($"{p.Mes:D2}/{p.Ano}")</strong>
+                                                </td>
+                                                <td class="text-center">@p.Ano</td>
+                                                <td class="text-center">@p.Mes</td>
+                                             
+                                                <td class="text-center">
+                                                    @foreach (var libro in p.Libros ?? new List<ServiciosEC.Models.LibroIva>())
+                                                    {
+                                                        var json = Json.Serialize(libro);
+                                                        <button type="button"
+                                                                class="app-btn app-btn--info app-btn--sm btn-ver-libro"
+                                                                data-toggle="modal"
+                                                                data-target="#libroIvaModal"
+                                                                data-libro='@Html.Raw(json)'>
+                                                            <i class="fas fa-eye me-1"></i> Ver detalle
+                                                        </button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
-
-                            <div class="text-center mt-3">
-                                <button type="submit" class="app-btn app-btn--primary app-btn--lg app-btn--shine">
-                                    <i class="fas fa-search me-2"></i> Ver Período
-                                </button>
+                        }
+                        else
+                        {
+                            <div class="app-empty">
+                                <i class="fas fa-inbox"></i>
+                                <h4>No hay períodos cargados</h4>
+                                <p>Este cliente todavía no tiene comprobantes cargados en el sistema.</p>
                             </div>
-                        </form>
+                        }
                     </div>
                 </div>
-            </div>
 
-            <!-- Card: Períodos Cargados -->
-            <div class="col-md-6 d-flex">
-                <div class="app-card w-100 d-flex flex-column">
-                    <div class="app-card__header">
-                        <h5 class="app-card__title">
-                            <i class="fas fa-list me-2"></i> Períodos Cargados
-                        </h5>
-                    </div>
-                    <div class="app-card__body d-flex flex-column flex-grow-1 text-center">
-                        <p class="app-text-muted mb-3">
-                            Consultá todos los períodos que tienen comprobantes cargados en el sistema.
-                        </p>
-
-                        <div class="mt-auto">
-                            <a asp-action="PeriodosCargados"
-                               asp-route-cuit="@ViewBag.Cuit"
-                               class="app-btn app-btn--info app-btn--lg app-btn--shine">
-                                <i class="fas fa-eye me-2"></i> Ver Períodos
-                            </a>
-                        </div>
-                    </div>
+                <!-- Botón Volver -->
+                <div class="app-mt-4">
+                    <a asp-action="Index"
+                       asp-controller="IVA"
+                       asp-route-cuit="@ViewBag.Cuit"
+                       class="app-btn app-btn--outline">
+                        <i class="fas fa-arrow-left me-2"></i> Volver al IVA
+                    </a>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 </section>
-
-<!-- ===================== Gráfico IVA Anual ===================== -->
-@if (graficoIva.Any())
-{
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row justify-content-center mt-4">
-                <div class="col-12 col-lg-10">
-                    <div class="app-card">
-                        <div class="app-card__header">
-                            <div class="d-flex justify-content-between align-items-center flex-wrap w-100">
-                                <div>
-                                    <h5 class="app-card__title mb-0">
-                                        <i class="fas fa-chart-bar me-2"></i> IVA por Año
-                                    </h5>
-                                    <small class="app-text-muted">Crédito Fiscal vs Débito Fiscal</small>
-                                </div>
-                                <div class="form-inline mt-2 mt-md-0">
-                                    <label for="anioGrafico" class="mr-2 mb-0 app-text-muted small">Año:</label>
-                                    <select id="anioGrafico" class="app-form-control form-control-sm" style="width: auto;">
-                                        @foreach (var d in graficoIva)
-                                        {
-                                            <option value="@d.Anio">@d.Anio</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="app-card__body">
-                            <canvas id="graficoIvaAnual" style="max-height: 250px; min-height: 180px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-}
-
-<!-- ===================== Cards de totales ===================== -->
-@if (graficoIva.Any())
-{
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row justify-content-center mt-3">
-                <div class="col-12 col-lg-10">
-                    <div class="row g-3">
-
-                        <!-- Card Crédito Fiscal -->
-                        <div class="col-md-6 d-flex">
-                            <div class="app-card w-100 app-card--ventas">
-                                <div class="app-card__body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="app-text-muted mb-1">
-                                                <i class="fas fa-arrow-down me-2"></i> Total IVA Crédito Fiscal
-                                            </h6>
-                                            <small class="app-text-muted" id="anioCreditoLabel"></small>
-                                        </div>
-                                        <h3 class="app-h3 app-text-ventas" id="totalCreditoNeto">$ 0,00</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card Débito Fiscal -->
-                        <div class="col-md-6 d-flex">
-                            <div class="app-card w-100 app-card--compras">
-                                <div class="app-card__body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="app-text-muted mb-1">
-                                                <i class="fas fa-arrow-up me-2"></i> Total IVA Débito Fiscal
-                                            </h6>
-                                            <small class="app-text-muted" id="anioDebitoLabel"></small>
-                                        </div>
-                                        <h3 class="app-h3 app-text-compras" id="totalDebitoNeto">$ 0,00</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-}
-
-<!-- ===================== Botón Volver ===================== -->
-<div class="app-mt-4">
-    <a asp-controller="Cliente"
-       asp-action="Details"
-       asp-route-id="@ViewBag.id"
-       class="app-btn app-btn--outline">
-        <i class="fas fa-arrow-left me-2"></i> Volver
-    </a>
-</div>
 
 <!-- ===================== Modal Libro IVA ===================== -->
 <div class="modal fade" id="libroIvaModal" tabindex="-1" role="dialog" aria-labelledby="libroIvaModalLabel" aria-hidden="true">
@@ -314,12 +226,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-    <script>
-        // Pasamos los datos del gráfico como variable global
-        window.datosGraficoIva = @Html.Raw(Json.Serialize(ViewBag.GraficoIva ?? new List<object>()));
-    </script>
-
-    <script src="~/js/iva-index.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/iva-periodos.js" asp-append-version="true"></script>
 }
